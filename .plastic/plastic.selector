@@ -1,0 +1,4 @@
+repository "components_project@Capn_Qwan@cloud"
+  path "/"
+    br "/main"
+    co "/main"
