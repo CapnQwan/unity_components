@@ -26,6 +26,6 @@ public class NoiseRenderer : MonoBehaviour
     Texture2D texture = TextureGenerator.TextureFromHeightMap(_noiseMap);
 
     _renderer = this.GetComponent<Renderer>();
-    _renderer.material.mainTexture = texture;
+    _renderer.sharedMaterial.mainTexture = texture;
   }
 }

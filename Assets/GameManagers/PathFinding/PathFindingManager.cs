@@ -28,7 +28,7 @@ public class PathFindingManager : MonoBehaviour
 
 		_pathGrid = new PathGrid();
 		_pathGrid.Init();
-		int nodeCount = _pathGrid.Chunks[0].Nodes.Length * _pathGrid.Chunks.Length;
+		int nodeCount = _pathGrid.Chunks[0, 0].Nodes.Length * _pathGrid.Chunks.Length;
 		_nodes = new PathNode[nodeCount];
 		int index = 0;
 		foreach (PathChunk chunk in _pathGrid.Chunks)
