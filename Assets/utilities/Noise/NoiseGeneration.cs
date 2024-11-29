@@ -6,51 +6,6 @@ using UnityEngine;
 public static class NoiseGeneration
 {
 
-  /// <summary>
-  /// Generates a noise map based on the type of scriptable object passed to it
-  /// </summary>
-  /// <param name="noiseScriptableObject">The data relating to the noise that will be generated</param>
-  /// <returns>A 2D array representing the generated noise map.</returns>
-  public static float[,] GenerateNoiseMap(Noise_SO noiseScriptableObject)
-  {
-    if (noiseScriptableObject is CellularNoise_SO cellularNoiseData)
-    {
-      return GenerateCellularNoiseMap(cellularNoiseData);
-    }
-    if (noiseScriptableObject is PerlinNoise_SO perlinNoiseData)
-    {
-      return GeneratePerlinNoiseMap(perlinNoiseData);
-    }
-    if (noiseScriptableObject is SimplexNoise_SO simplexNoiseData)
-    {
-      return GenerateSimplexNoiseMap(simplexNoiseData);
-    }
-    if (noiseScriptableObject is ValueNoise_SO valueNoiseData)
-    {
-      return GenerateValueNoiseMap(valueNoiseData);
-    }
-    if (noiseScriptableObject is BlueNoise_SO blueNoiseData)
-    {
-      return GenerateBlueNoiseMap(blueNoiseData);
-    }
-    if (noiseScriptableObject is PinkNoise_SO pinkNoiseData)
-    {
-      return GeneratePinkNoiseMap(pinkNoiseData);
-    }
-    if (noiseScriptableObject is TurbulenceNoise_SO turbulenceNoiseData)
-    {
-      return GenerateTurbulenceNoiseMap(turbulenceNoiseData);
-    }
-    if (noiseScriptableObject is RidgedMultiFractalNoise_SO ridgedNoiseData)
-    {
-      return GenerateRidgedMultiFractalNoiseMap(ridgedNoiseData);
-    }
-    if (noiseScriptableObject is WavletNoise_SO wavletNoiseData)
-    {
-      return GenerateWavletNoiseMap(wavletNoiseData);
-    }
-
-    return GenerateRandomNoiseMap(noiseScriptableObject);
 
   // This function finds the two closest cells and returns a value
   // based on the points distance between the two cells
@@ -129,43 +84,6 @@ public static class NoiseGeneration
     float maxDistance = Mathf.Max(distances[0], distances[1]);
 
     return minDistance / maxDistance;
-  }
-
-
-
-  public static float[,] GenerateSimplexNoiseMap(SimplexNoise_SO noiseScriptableObject)
-  {
-    return new float[1, 1];
-  }
-
-  public static float[,] GenerateValueNoiseMap(ValueNoise_SO noiseScriptableObject)
-  {
-    return new float[1, 1];
-  }
-
-  public static float[,] GenerateBlueNoiseMap(BlueNoise_SO noiseScriptableObject)
-  {
-    return new float[1, 1];
-  }
-
-  public static float[,] GeneratePinkNoiseMap(PinkNoise_SO noiseScriptableObject)
-  {
-    return new float[1, 1];
-  }
-
-  public static float[,] GenerateTurbulenceNoiseMap(TurbulenceNoise_SO noiseScriptableObject)
-  {
-    return new float[1, 1];
-  }
-
-  public static float[,] GenerateRidgedMultiFractalNoiseMap(RidgedMultiFractalNoise_SO noiseScriptableObject)
-  {
-    return new float[1, 1];
-  }
-
-  public static float[,] GenerateWavletNoiseMap(WavletNoise_SO noiseScriptableObject)
-  {
-    return new float[1, 1];
   }
 
   public static float[,] GenerateDomainWrapingNoiseMap()
