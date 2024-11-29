@@ -76,3 +76,6 @@ dotnet_sort_system_directives_first = true
 
 # Line length limit
 max_line_length = 80
+
+# SA1310: Field names should not contain underscore
+dotnet_diagnostic.SA1310.severity = none
