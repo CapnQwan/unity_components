@@ -1,20 +1,29 @@
 using UnityEngine;
 
-public static class RandomNoise {
-	  public static float[,] GenerateRandomNoiseMap(Noise_SO noiseScriptableObject)
+public static class RandomNoise
+{
+
+  public static float[,] GenerateRandomNoiseMap(Noise_SO noiseScriptableObject)
   {
-    float[,] noiseMap = new float[noiseScriptableObject.Width, noiseScriptableObject.Height];
+    return GenerateRandomNoiseMap(noiseScriptableObject.Width, noiseScriptableObject.Height, noiseScriptableObject.Seed, noiseScriptableObject.Offset);
+  }
 
-    System.Random prng = new System.Random(noiseScriptableObject.Seed);
+  public static float[,] GenerateRandomNoiseMap(int width, int height, int seed, Vector2 offset)
+  {
+    float[,] noiseMap = new float[width, height];
 
-    float OffsetX = prng.Next(-100000, 100000) + noiseScriptableObject.Offset.x;
-    float OffsetY = prng.Next(-100000, 100000) + noiseScriptableObject.Offset.y;
-    Vector2 octaveOffsets = new Vector2(OffsetX, OffsetY);
+    System.Random prng = new System.Random(seed);
 
+    float randomOffsetX = prng.Next(-100000, 100000);
+    float randomOffsetY = prng.Next(-100000, 100000);
+    float offsetX = randomOffsetX + offset.x;
+    float offsetY = randomOffsetY + offset.y;
 
-    for (int y = 0; y < noiseScriptableObject.Height; y++)
+    Vector2 octaveOffsets = new Vector2(offsetX, offsetY);
+
+    for (int y = 0; y < height; y++)
     {
-      for (int x = 0; x < noiseScriptableObject.Width; x++)
+      for (int x = 0; x < width; x++)
       {
 
         float noiseHeight = 0;

@@ -1,0 +1,78 @@
+root = true
+
+[*.cs]
+# General formatting
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Disable file header checks (SA1633)
+dotnet_diagnostic.SA1633.severity = none
+
+# Indentation settings
+indent_style = space
+indent_size = 2
+
+# C# specific formatting rules
+csharp_new_line_before_open_brace = all
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+csharp_indent_block_contents = true
+
+# Constant fields naming convention: CAPS_LOCK
+dotnet_naming_rule.constant_field_naming.style = all_upper
+dotnet_naming_rule.constant_field_naming.symbols = constant_fields
+dotnet_naming_rule.constant_field_naming.severity = warning
+
+dotnet_naming_symbols.constant_fields.applicable_kinds = field
+dotnet_naming_symbols.constant_fields.required_modifiers = const
+
+dotnet_naming_style.all_upper.capitalization = all_upper
+
+# Public members naming convention: PascalCase
+dotnet_naming_rule.public_member_naming.style = pascal_case
+dotnet_naming_rule.public_member_naming.symbols = public_members
+dotnet_naming_rule.public_member_naming.severity = warning
+
+dotnet_naming_symbols.public_members.applicable_kinds = property, method, field
+dotnet_naming_symbols.public_members.applicable_accessibilities = public
+
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+# Serialized fields naming convention: camelCase
+dotnet_naming_rule.serialized_field_naming.style = camel_case
+dotnet_naming_rule.serialized_field_naming.symbols = serialized_fields
+dotnet_naming_rule.serialized_field_naming.severity = warning
+
+dotnet_naming_symbols.serialized_fields.applicable_kinds = field
+dotnet_naming_symbols.serialized_fields.required_modifiers = none
+dotnet_naming_symbols.serialized_fields.required_attributes = UnityEngine.SerializeField
+
+dotnet_naming_style.camel_case.capitalization = camel_case
+
+# Private fields naming convention: _camelCase
+dotnet_naming_rule.private_field_naming.style = underscore_camel_case
+dotnet_naming_rule.private_field_naming.symbols = private_fields
+dotnet_naming_rule.private_field_naming.severity = warning
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.required_modifiers = none
+
+dotnet_naming_style.underscore_camel_case.capitalization = camel_case
+dotnet_naming_style.underscore_camel_case.required_prefix = _
+
+# Diagnostics and additional rules
+dotnet_diagnostic.CA1051.severity = error       # Avoid exposing internal fields
+dotnet_diagnostic.SA1503.severity = warning     # Braces for single-line statements
+dotnet_diagnostic.CS0168.severity = warning     # Unused variable warnings
+dotnet_diagnostic.SA1600.severity = warning     # Require documentation comments
+dotnet_diagnostic.SA1309.severity = none        # Allow private fields to start with an underscore
+
+# Organize `using` directives
+csharp_using_directive_placement = inside_namespace
+dotnet_sort_system_directives_first = true
+
+# Line length limit
+max_line_length = 80

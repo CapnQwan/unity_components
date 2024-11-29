@@ -1,7 +1,8 @@
 using UnityEngine;
 
-public static class PerlinNoise {
-	  public static float[,] GeneratePerlinNoiseMap(PerlinNoise_SO noiseScriptableObject)
+public static class PerlinNoise
+{
+  public static float[,] GeneratePerlinNoiseMap(PerlinNoise_SO noiseScriptableObject)
   {
     float[,] noiseMap = new float[noiseScriptableObject.Width, noiseScriptableObject.Height];
 
@@ -14,9 +15,9 @@ public static class PerlinNoise {
 
     for (int i = 0; i < noiseScriptableObject.Octaves; i++)
     {
-      float OffsetX = prng.Next(-100000, 100000) + noiseScriptableObject.Offset.x;
-      float OffsetY = prng.Next(-100000, 100000) - noiseScriptableObject.Offset.y;
-      octaveOffsets[i] = new Vector2(OffsetX, OffsetY);
+      float offsetX = prng.Next(-100000, 100000) + noiseScriptableObject.Offset.x;
+      float offsetY = prng.Next(-100000, 100000) - noiseScriptableObject.Offset.y;
+      octaveOffsets[i] = new Vector2(offsetX, offsetY);
 
       maxPossibleHeight += amplitude;
       amplitude *= noiseScriptableObject.Persistance;
@@ -43,13 +44,12 @@ public static class PerlinNoise {
         frequency = 1;
         float noiseHeight = 0;
 
-
         for (int i = 0; i < noiseScriptableObject.Octaves; i++)
         {
           float sampleX = (x - halfWidth + octaveOffsets[i].x) / scale * frequency;
           float sampleY = (y - halfHeight + octaveOffsets[i].y) / scale * frequency;
 
-          float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
+          float perlinValue = (Mathf.PerlinNoise(sampleX, sampleY) * 2) - 1;
           noiseHeight += perlinValue * amplitude;
 
           amplitude *= noiseScriptableObject.Persistance;
@@ -64,6 +64,7 @@ public static class PerlinNoise {
         {
           minLocalNoiseHeight = noiseHeight;
         }
+
         noiseMap[x, y] = noiseHeight;
       }
     }
@@ -78,7 +79,7 @@ public static class PerlinNoise {
         }
         else
         {
-          float normalizedHeight = (noiseMap[x, y] + 1) / (maxPossibleHeight);
+          float normalizedHeight = (noiseMap[x, y] + 1) / maxPossibleHeight;
           noiseMap[x, y] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
         }
       }
