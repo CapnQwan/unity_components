@@ -1,9 +1,9 @@
+using System;
 using UnityEngine;
 
 /// <summary>
 /// Renders a noise map as a texture on the attached object's material using a noise map generator.
 /// </summary>
-[RequireComponent(typeof(Renderer))]
 public class NoiseRenderer : MonoBehaviour
 {
   /// <summary>
@@ -15,7 +15,7 @@ public class NoiseRenderer : MonoBehaviour
   /// <summary>
   /// The Renderer component attached to this GameObject.
   /// </summary>
-  private Renderer _renderer;
+  private Renderer _meshRenderer;
 
   /// <summary>
   /// The generated noise map represented as a 2D array of floats.
@@ -23,19 +23,17 @@ public class NoiseRenderer : MonoBehaviour
   private float[,] _noiseMap;
 
   /// <summary>
-  /// Initializes the Renderer component reference when the script is loaded.
-  /// </summary>
-  void Awake()
-  {
-    this._renderer = this.GetComponent<Renderer>();
-  }
-
-  /// <summary>
   /// Generates and applies the noise texture at the start of the game.
   /// </summary>
   void Start()
   {
+    this.GetRenderer();
     this.GenerateTexture();
+
+    if (noiseScriptableObject != null)
+    {
+      noiseScriptableObject.OnValuesChanged += UpdateNoiseMesh;
+    }
   }
 
   /// <summary>
@@ -43,7 +41,12 @@ public class NoiseRenderer : MonoBehaviour
   /// </summary>
   void OnValidate()
   {
-    this.GenerateTexture();
+    //this.GenerateTexture();
+  }
+
+  private void GetRenderer()
+  {
+    this._meshRenderer = this.GetComponent<MeshRenderer>();
   }
 
   /// <summary>
@@ -51,6 +54,11 @@ public class NoiseRenderer : MonoBehaviour
   /// </summary>
   private void GenerateTexture()
   {
+    if (!this._meshRenderer)
+    {
+      throw new ArgumentException("No Mesh Renderer Attached");
+    }
+
     // Generate the noise map using the scriptable object.
     this._noiseMap = this.noiseScriptableObject.GenerateNoiseMap();
 
@@ -58,6 +66,12 @@ public class NoiseRenderer : MonoBehaviour
     Texture2D texture = TextureGenerator.TextureFromHeightMap(this._noiseMap);
 
     // Apply the texture to the material of the Renderer.
-    this._renderer.sharedMaterial.mainTexture = texture;
+    this._meshRenderer.sharedMaterial.mainTexture = texture;
+  }
+
+  [ContextMenu("Update Noise Mesh")]
+  public void UpdateNoiseMesh()
+  {
+    GenerateTexture();
   }
 }

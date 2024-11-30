@@ -1,3 +1,4 @@
+using System;
 using Noise;
 using UnityEngine;
 
@@ -7,23 +8,25 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Noise/NoiseBase", order = 1)]
 public class RandomNoise_SO : ScriptableObject
 {
+  public Action OnValuesChanged;
+
   /// <summary>
   /// The width of the noise map.
   /// </summary>
   [SerializeField]
-  private readonly int width;
+  private int width;
 
   /// <summary>
   /// The height of the noise map.
   /// </summary>
   [SerializeField]
-  private readonly int height;
+  private int height;
 
   /// <summary>
   /// The seed for the random number generator used in noise generation.
   /// </summary>
   [SerializeField]
-  private readonly int seed;
+  private int seed;
 
   /// <summary>
   /// The offset applied to the noise map.

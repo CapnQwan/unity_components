@@ -9,15 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8d5780fef926dd48bb5aec707b333f6, type: 3}
-  m_Name: PN_SO_2
+  m_Script: {fileID: 11500000, guid: bc7d562a373c3704486aa14f4dd143b1, type: 3}
+  m_Name: N_SO_1
   m_EditorClassIdentifier: 
-  width: 160
-  height: 80
-  seed: 25
   offset: {x: 0, y: 0}
-  scale: 0.72
-  lacunarity: 0.48
-  persistance: 0.6
-  octaves: 3
-  normalizeMode: 0

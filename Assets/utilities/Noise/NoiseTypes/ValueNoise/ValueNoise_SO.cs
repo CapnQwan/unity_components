@@ -10,6 +10,6 @@ public class ValueNoise_SO : RandomNoise_SO
 {
   [SerializeField]
   private int gridX, gridY;
-  public int GridX => gridX;
-  public int GridY => gridY;
+  public int GridX => this.gridX;
+  public int GridY => this.gridY;
 }

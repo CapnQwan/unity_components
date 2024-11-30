@@ -27,7 +27,7 @@ public class PerlinNoise_SO : RandomNoise_SO
   /// The scale factor for the Perlin noise map, influencing the frequency of the noise pattern.
   /// </summary>
   [SerializeField]
-  private readonly float scale;
+  private float scale;
 
   /// <summary>
   /// Gets the scale factor for the Perlin noise map.
@@ -38,7 +38,7 @@ public class PerlinNoise_SO : RandomNoise_SO
   /// The lacunarity value, which controls the frequency multiplier between octaves.
   /// </summary>
   [SerializeField]
-  private readonly float lacunarity;
+  private float lacunarity;
 
   /// <summary>
   /// Gets the lacunarity value for the Perlin noise map.
@@ -49,7 +49,7 @@ public class PerlinNoise_SO : RandomNoise_SO
   /// The persistence value, which determines the amplitude reduction between octaves.
   /// </summary>
   [SerializeField]
-  private readonly float persistance;
+  private float persistance;
 
   /// <summary>
   /// Gets the persistence value for the Perlin noise map.
@@ -60,7 +60,7 @@ public class PerlinNoise_SO : RandomNoise_SO
   /// The number of octaves to use for generating multi-layered noise.
   /// </summary>
   [SerializeField]
-  private readonly int octaves;
+  private int octaves;
 
   /// <summary>
   /// Gets the number of octaves for the Perlin noise map.

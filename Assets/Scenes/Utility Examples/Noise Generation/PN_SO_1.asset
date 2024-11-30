@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12b5c9566369f684891a602dcb02fcd8, type: 3}
-  m_Name: CN_SO_2
+  m_Script: {fileID: 11500000, guid: f8d5780fef926dd48bb5aec707b333f6, type: 3}
+  m_Name: PN_SO_1
   m_EditorClassIdentifier: 
-  width: 80
-  height: 80
-  seed: 18
   offset: {x: 0, y: 0}
-  cellsCountX: 4
-  cellsCountY: 4
+  normalizeMode: 0
