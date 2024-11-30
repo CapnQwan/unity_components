@@ -1,52 +1,78 @@
+using Noise;
 using UnityEngine;
 
+/// <summary>
+/// Provides static methods for generating and manipulating noise maps using various algorithms and scaling methods.
+/// </summary>
 public static class NoiseGeneration
 {
-  public static float[,] GenerateDomainWrapingNoiseMap()
+  /// <summary>
+  /// Generates a random noise map using parameters defined in a <see cref="RandomNoise_SO"/> ScriptableObject.
+  /// </summary>
+  /// <param name="noiseScriptableObject">The ScriptableObject containing parameters for the random noise map generation.</param>
+  /// <returns>A 2D array of floats representing the generated noise map.</returns>
+  public static float[,] GenerateRandomNoiseMap(RandomNoise_SO noiseScriptableObject)
   {
-    return new float[1, 1];
+    return Noise.RandomNoise.GenerateRandomNoiseMap(noiseScriptableObject);
   }
 
-  // public static float[,] GenerateFractalNoise(NoiseLayer[] noiseLayers)
-  // {
-  //   int mapSizeX = 0;
-  //   int mapSizeY = 0;
+  /// <summary>
+  /// Generates a random noise map using a <see cref="RandomNoiseParameters"/> struct.
+  /// </summary>
+  /// <param name="noiseParameters">The parameters for the random noise map generation.</param>
+  /// <returns>A 2D array of floats representing the generated noise map.</returns>
+  public static float[,] GenerateRandomNoiseMap(RandomNoiseParameters noiseParameters)
+  {
+    return Noise.RandomNoise.GenerateRandomNoiseMap(noiseParameters);
+  }
 
-  //   for (int i = 0; i < noiseLayers.Length; i++)
-  //   {
-  //     if (noiseLayers[i].NoiseScriptableObject.Width > mapSizeX)
-  //     {
-  //       mapSizeX = noiseLayers[i].NoiseScriptableObject.Width;
-  //     }
-  //     if (noiseLayers[i].NoiseScriptableObject.Height > mapSizeY)
-  //     {
-  //       mapSizeY = noiseLayers[i].NoiseScriptableObject.Height;
-  //     }
-  //   }
+  /// <summary>
+  /// Generates a Perlin noise map using parameters defined in a <see cref="PerlinNoise_SO"/> ScriptableObject.
+  /// </summary>
+  /// <param name="noiseScriptableObject">The ScriptableObject containing parameters for the Perlin noise map generation.</param>
+  /// <returns>A 2D array of floats representing the generated Perlin noise map.</returns>
+  public static float[,] GeneratePerlinNoiseMap(PerlinNoise_SO noiseScriptableObject)
+  {
+    return Noise.PerlinNoise.GeneratePerlinNoiseMap(noiseScriptableObject);
+  }
 
-  //   float[,] fractalNoiseMap = new float[mapSizeX, mapSizeY];
+  /// <summary>
+  /// Generates a Perlin noise map using a <see cref="PerlinNoiseParameters"/> struct.
+  /// </summary>
+  /// <param name="noiseParameters">The parameters for the Perlin noise map generation.</param>
+  /// <returns>A 2D array of floats representing the generated Perlin noise map.</returns>
+  public static float[,] GeneratePerlinNoiseMap(PerlinNoiseParameters noiseParameters)
+  {
+    return Noise.PerlinNoise.GeneratePerlinNoiseMap(noiseParameters);
+  }
 
-  //   for (int i = 0; i < noiseLayers.Length; i++)
-  //   {
-  //     float[,] noiseMap = GenerateNoiseMap(noiseLayers[i].NoiseScriptableObject);
-  //     noiseMap = ScaleNoiseMap(
-  //       noiseMap,
-  //       mapSizeX,
-  //       mapSizeY
-  //       );
+  /// <summary>
+  /// Generates a cellular noise map using parameters defined in a <see cref="CellularNoise_SO"/> ScriptableObject.
+  /// </summary>
+  /// <param name="noiseScriptableObject">The ScriptableObject containing parameters for the cellular noise map generation.</param>
+  /// <returns>A 2D array of floats representing the generated cellular noise map.</returns>
+  public static float[,] GenerateCellularNoiseMap(CellularNoise_SO noiseScriptableObject)
+  {
+    return Noise.CellularNoise.GenerateCellularNoiseMap(noiseScriptableObject);
+  }
 
-  //     for (int x = 0; x < mapSizeX; x++)
-  //     {
-  //       for (int y = 0; y < mapSizeY; y++)
-  //       {
-  //         fractalNoiseMap[x, y] += noiseMap[x, y] * noiseLayers[i].Amplitude / noiseLayers.Length;
-  //       }
-  //     }
-  //   }
+  /// <summary>
+  /// Generates a cellular noise map using a <see cref="CellularNoiseParameters"/> struct.
+  /// </summary>
+  /// <param name="noiseParameters">The parameters for the cellular noise map generation.</param>
+  /// <returns>A 2D array of floats representing the generated cellular noise map.</returns>
+  public static float[,] GenerateCellularNoiseMap(CellularNoiseParameters noiseParameters)
+  {
+    return Noise.CellularNoise.GenerateCellularNoiseMap(noiseParameters);
+  }
 
-  //   return fractalNoiseMap;
-  // }
-
+  /// <summary>
+  /// Scales a given noise map to a new size using bilinear interpolation.
+  /// </summary>
+  /// <param name="originalMap">The original 2D noise map to be scaled.</param>
+  /// <param name="targetWidth">The desired width of the scaled noise map.</param>
+  /// <param name="targetHeight">The desired height of the scaled noise map.</param>
+  /// <returns>A 2D array of floats representing the scaled noise map.</returns>
   public static float[,] ScaleNoiseMap(float[,] originalMap, int targetWidth, int targetHeight)
   {
     float[,] scaledMap = new float[targetWidth, targetHeight];

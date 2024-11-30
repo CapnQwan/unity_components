@@ -1,134 +1,206 @@
-using UnityEngine;
-
-public static class PerlinNoise
+namespace Noise
 {
-  private const int OFFSET_RANGE = 100000;
+  using System;
+  using UnityEngine;
 
   /// <summary>
-  /// Generates a Perlin Noise map using parameters from a ScriptableObject.
+  /// A static class for generating Perlin noise maps using customizable parameters.
   /// </summary>
-  public static float[,] GeneratePerlinNoiseMap(PerlinNoise_SO noiseScriptableObject)
+  public static class PerlinNoise
   {
-    return GeneratePerlinNoiseMap(
-      noiseScriptableObject.Width,
-      noiseScriptableObject.Height,
-      noiseScriptableObject.Seed,
-      noiseScriptableObject.Octaves,
-      noiseScriptableObject.Scale,
-      noiseScriptableObject.Lacunarity,
-      noiseScriptableObject.Persistance,
-      noiseScriptableObject.NormalizeMode,
-      noiseScriptableObject.Offset);
-  }
+    /// <summary>Default width of the generated noise map.</summary>
+    public const int DEFAULT_WIDTH = 50;
 
-  /// <summary>
-  /// Generates a Perlin Noise map using the specified parameters.
-  /// </summary>
-  /// <param name="width">Width of the noise map.</param>
-  /// <param name="height">Height of the noise map.</param>
-  /// <param name="seed">Seed for random generation.</param>
-  /// <param name="octaves">Number of octaves for noise layers.</param>
-  /// <param name="scale">Scale of the noise.</param>
-  /// <param name="lacunarity">Change in frequency between octaves.</param>
-  /// <param name="persistance">Change in amplitude between octaves.</param>
-  /// <param name="normalizeMode">Normalization mode for noise values.</param>
-  /// <param name="offset">Offset to apply to the noise map.</param>
-  public static float[,] GeneratePerlinNoiseMap(
-    int width,
-    int height,
-    int seed,
-    int octaves,
-    float scale,
-    float lacunarity,
-    float persistance,
-    NormalizeMode normalizeMode,
-    Vector2 offset)
-  {
-    float[,] noiseMap = new float[width, height];
+    /// <summary>Default height of the generated noise map.</summary>
+    public const int DEFAULT_HEIGHT = 50;
 
-    System.Random prng = new System.Random(seed);
-    Vector2[] octaveOffsets = new Vector2[octaves];
+    /// <summary>Default seed for the random number generator.</summary>
+    public const int DEFAULT_SEED = 0;
 
-    float maxPossibleHeight = 0;
-    float amplitude = 1;
-    float frequency;
+    /// <summary>Default scale factor for the noise map.</summary>
+    public const float DEFAULT_SCALE = 0.5f;
 
-    for (int i = 0; i < octaves; i++)
+    /// <summary>Default lacunarity value for controlling frequency.</summary>
+    public const float DEFAULT_LACUNARITY = 0.5f;
+
+    /// <summary>Default persistence value for controlling amplitude reduction.</summary>
+    public const float DEFAULT_PERSISTANCE = 0.5f;
+
+    /// <summary>Default number of octaves for generating multi-layer noise.</summary>
+    public const int DEFAULT_OCTAVES = 3;
+
+    /// <summary>Default normalization mode for noise values.</summary>
+    public const NormalizeMode DEFAULT_NORMALIZE_MODE = NormalizeMode.Local;
+
+    /// <summary>Default offset applied to the noise map coordinates.</summary>
+    public static readonly Vector2 DEFAULT_OFFSET = new Vector2(0f, 0f);
+
+    /// <summary>Range for generating random offsets in the noise map.</summary>
+    private const int OFFSET_RANGE = 100000;
+
+    /// <summary>
+    /// Generates a Perlin noise map using a <see cref="PerlinNoise_SO"/> scriptable object.
+    /// </summary>
+    /// <param name="noiseScriptableObject">The scriptable object containing noise parameters.</param>
+    /// <returns>A 2D array of float values representing the generated noise map.</returns>
+    public static float[,] GeneratePerlinNoiseMap(PerlinNoise_SO noiseScriptableObject)
     {
-      float offsetX = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) + offset.x;
-      float offsetY = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) - offset.y;
-      octaveOffsets[i] = new Vector2(offsetX, offsetY);
-
-      maxPossibleHeight += amplitude;
-      amplitude *= persistance;
+      return GeneratePerlinNoiseMap(
+        noiseScriptableObject.Width,
+        noiseScriptableObject.Height,
+        noiseScriptableObject.Seed,
+        noiseScriptableObject.Octaves,
+        noiseScriptableObject.Scale,
+        noiseScriptableObject.Lacunarity,
+        noiseScriptableObject.Persistance,
+        noiseScriptableObject.NormalizeMode,
+        noiseScriptableObject.Offset);
     }
 
-    if (scale <= 0)
+    /// <summary>
+    /// Generates a Perlin noise map using <see cref="PerlinNoiseParameters"/>.
+    /// </summary>
+    /// <param name="perlinNoiseParameters">A struct containing all the parameters for the noise generation.</param>
+    /// <returns>A 2D array of float values representing the generated noise map.</returns>
+    public static float[,] GeneratePerlinNoiseMap(PerlinNoiseParameters perlinNoiseParameters)
     {
-      scale = 0.0001f;
+      return GeneratePerlinNoiseMap(
+        perlinNoiseParameters.Width,
+        perlinNoiseParameters.Height,
+        perlinNoiseParameters.Seed,
+        perlinNoiseParameters.Octaves,
+        perlinNoiseParameters.Scale,
+        perlinNoiseParameters.Lacunarity,
+        perlinNoiseParameters.Persistance,
+        perlinNoiseParameters.NormalizeMode,
+        perlinNoiseParameters.Offset);
     }
 
-    float maxLocalNoiseHeight = float.MinValue;
-    float minLocalNoiseHeight = float.MaxValue;
-
-    float halfWidth = width / 2f;
-    float halfHeight = height / 2f;
-
-    // TODO: add threading to handle each pixel
-    for (int y = 0; y < height; y++)
+    /// <summary>
+    /// Generates a Perlin noise map with specified parameters.
+    /// </summary>
+    /// <param name="width">Width of the noise map.</param>
+    /// <param name="height">Height of the noise map.</param>
+    /// <param name="seed">Seed for the random number generator.</param>
+    /// <param name="octaves">Number of octaves to use for multi-layered noise.</param>
+    /// <param name="scale">Scale factor for the noise map.</param>
+    /// <param name="lacunarity">Controls the frequency of each octave.</param>
+    /// <param name="persistance">Controls the amplitude reduction of each octave.</param>
+    /// <param name="normalizeMode">Specifies how to normalize the noise values.</param>
+    /// <param name="offset">Offset applied to the noise map coordinates.</param>
+    /// <returns>A 2D array of float values representing the generated noise map.</returns>
+    /// <exception cref="ArgumentException">Thrown if width, height, octaves, or lacunarity are invalid.</exception>
+    public static float[,] GeneratePerlinNoiseMap(
+      int width = DEFAULT_WIDTH,
+      int height = DEFAULT_HEIGHT,
+      int seed = DEFAULT_SEED,
+      int octaves = DEFAULT_OCTAVES,
+      float scale = DEFAULT_SCALE,
+      float lacunarity = DEFAULT_LACUNARITY,
+      float persistance = DEFAULT_PERSISTANCE,
+      NormalizeMode normalizeMode = DEFAULT_NORMALIZE_MODE,
+      Vector2 offset = default)
     {
-      for (int x = 0; x < width; x++)
+      if (width <= 0 || height <= 0)
       {
-        amplitude = 1;
-        frequency = 1;
-        float noiseHeight = 0;
-
-        for (int i = 0; i < octaves; i++)
-        {
-          float sampleX = (x - halfWidth + octaveOffsets[i].x) / scale * frequency;
-          float sampleY = (y - halfHeight + octaveOffsets[i].y) / scale * frequency;
-
-          float perlinValue = (Mathf.PerlinNoise(sampleX, sampleY) * 2) - 1;
-          noiseHeight += perlinValue * amplitude;
-
-          amplitude *= persistance;
-          frequency *= lacunarity;
-        }
-
-        if (noiseHeight > maxLocalNoiseHeight)
-        {
-          maxLocalNoiseHeight = noiseHeight;
-        }
-        else if (noiseHeight < minLocalNoiseHeight)
-        {
-          minLocalNoiseHeight = noiseHeight;
-        }
-
-        noiseMap[x, y] = noiseHeight;
+        throw new ArgumentException("Width and height must be greater than zero.");
       }
-    }
 
-    for (int y = 0; y < height; y++)
-    {
-      for (int x = 0; x < width; x++)
+      if (octaves <= 0)
       {
-        if (normalizeMode == NormalizeMode.Local)
-        {
-          noiseMap[x, y] = NormalizeValue(noiseMap[x, y], minLocalNoiseHeight, maxLocalNoiseHeight);
-        }
-        else
-        {
-          float normalizedHeight = (noiseMap[x, y] + 1) / maxPossibleHeight;
-          noiseMap[x, y] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
-        }
+        throw new ArgumentException("Octaves must be greater than zero.");
       }
+
+      if (lacunarity <= 0)
+      {
+        throw new ArgumentException("Lacunarity must be greater than zero.");
+      }
+
+      float[,] noiseMap = new float[width, height];
+
+      System.Random prng = new System.Random(seed);
+      Vector2[] octaveOffsets = new Vector2[octaves];
+
+      float maxPossibleHeight = 0;
+      float amplitude = 1;
+      float frequency;
+
+      for (int i = 0; i < octaves; i++)
+      {
+        float offsetX = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) + offset.x;
+        float offsetY = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) - offset.y;
+        octaveOffsets[i] = new Vector2(offsetX, offsetY);
+
+        maxPossibleHeight += amplitude;
+        amplitude *= persistance;
+      }
+
+      if (scale <= 0)
+      {
+        scale = 0.0001f;
+      }
+
+      float maxLocalNoiseHeight = float.MinValue;
+      float minLocalNoiseHeight = float.MaxValue;
+
+      float halfWidth = width * 0.5f;
+      float halfHeight = height * 0.5f;
+
+      System.Threading.Tasks.Parallel.For(0, height, y =>
+      {
+        for (int x = 0; x < width; x++)
+        {
+          amplitude = 1;
+          frequency = 1;
+          float noiseHeight = 0;
+
+          for (int i = 0; i < octaves; i++)
+          {
+            float sampleX = (x - halfWidth + octaveOffsets[i].x) / scale * frequency;
+            float sampleY = (y - halfHeight + octaveOffsets[i].y) / scale * frequency;
+
+            float perlinValue = (Mathf.PerlinNoise(sampleX, sampleY) * 2) - 1;
+            noiseHeight += perlinValue * amplitude;
+
+            amplitude *= persistance;
+            frequency *= lacunarity;
+          }
+
+          if (noiseHeight > maxLocalNoiseHeight)
+          {
+            maxLocalNoiseHeight = noiseHeight;
+          }
+          else if (noiseHeight < minLocalNoiseHeight)
+          {
+            minLocalNoiseHeight = noiseHeight;
+          }
+
+          noiseMap[x, y] = noiseHeight;
+        }
+      });
+
+      System.Threading.Tasks.Parallel.For(0, height, y =>
+      {
+        for (int x = 0; x < width; x++)
+        {
+          if (normalizeMode == NormalizeMode.Local)
+          {
+            noiseMap[x, y] = NormalizeValue(noiseMap[x, y], minLocalNoiseHeight, maxLocalNoiseHeight);
+          }
+          else
+          {
+            float normalizedHeight = (noiseMap[x, y] + 1) / maxPossibleHeight;
+            noiseMap[x, y] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
+          }
+        }
+      });
+
+      return noiseMap;
     }
 
-    return noiseMap;
-  }
-
-  private static float NormalizeValue(float value, float min, float max)
-  {
-    return Mathf.InverseLerp(min, max, value);
+    private static float NormalizeValue(float value, float min, float max)
+    {
+      return Mathf.InverseLerp(min, max, value);
+    }
   }
 }
