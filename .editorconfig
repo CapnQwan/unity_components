@@ -64,10 +64,10 @@ dotnet_naming_style.underscore_camel_case.capitalization = camel_case
 dotnet_naming_style.underscore_camel_case.required_prefix = _
 
 # Diagnostics and additional rules
-dotnet_diagnostic.CA1051.severity = error       # Avoid exposing internal fields
-dotnet_diagnostic.SA1503.severity = warning     # Braces for single-line statements
+dotnet_diagnostic.CA1051.severity = none       # Avoid exposing internal fields
+dotnet_diagnostic.SA1503.severity = none     # Braces for single-line statements
 dotnet_diagnostic.CS0168.severity = warning     # Unused variable warnings
-dotnet_diagnostic.SA1600.severity = warning     # Require documentation comments
+dotnet_diagnostic.SA1600.severity = suggestion     # Require documentation comments
 dotnet_diagnostic.SA1309.severity = none        # Allow private fields to start with an underscore
 
 # Organize `using` directives
@@ -106,3 +106,12 @@ dotnet_diagnostic.SA1400.severity = none
 
 # IDE0032: Use auto property
 dotnet_diagnostic.IDE0032.severity = none
+
+# SA1501: Statement should not be on a single line
+dotnet_diagnostic.SA1501.severity = none
+
+# SA1312: Variable names should begin with lower-case letter
+dotnet_diagnostic.SA1312.severity = none
+
+# SA1101: Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none

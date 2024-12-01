@@ -12,5 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8d5780fef926dd48bb5aec707b333f6, type: 3}
   m_Name: PN_SO_1
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
+  width: 100
+  height: 100
+  seed: 3
+  offset: {x: 9.92, y: 10}
+  scale: 15.38
+  lacunarity: 2.37
+  persistance: 0.39
+  octaves: 8
   normalizeMode: 0

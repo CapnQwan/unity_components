@@ -123,7 +123,6 @@ namespace Noise
 
       float maxPossibleHeight = 0;
       float amplitude = 1;
-      float frequency;
 
       for (int i = 0; i < octaves; i++)
       {
@@ -146,12 +145,18 @@ namespace Noise
       float halfWidth = width * 0.5f;
       float halfHeight = height * 0.5f;
 
+      // Thread-safe variables for min/max values
+      object lockObject = new object();
+
       System.Threading.Tasks.Parallel.For(0, height, y =>
       {
+        float localMax = float.MinValue;
+        float localMin = float.MaxValue;
+
         for (int x = 0; x < width; x++)
         {
-          amplitude = 1;
-          frequency = 1;
+          float amplitude = 1;
+          float frequency = 1;
           float noiseHeight = 0;
 
           for (int i = 0; i < octaves; i++)
@@ -166,16 +171,17 @@ namespace Noise
             frequency *= lacunarity;
           }
 
-          if (noiseHeight > maxLocalNoiseHeight)
-          {
-            maxLocalNoiseHeight = noiseHeight;
-          }
-          else if (noiseHeight < minLocalNoiseHeight)
-          {
-            minLocalNoiseHeight = noiseHeight;
-          }
+          localMax = Mathf.Max(localMax, noiseHeight);
+          localMin = Mathf.Min(localMin, noiseHeight);
 
           noiseMap[x, y] = noiseHeight;
+        }
+
+        // Update global min/max safely
+        lock (lockObject)
+        {
+          maxLocalNoiseHeight = Mathf.Max(maxLocalNoiseHeight, localMax);
+          minLocalNoiseHeight = Mathf.Min(minLocalNoiseHeight, localMin);
         }
       });
 

@@ -1,6 +1,9 @@
 namespace Noise
 {
   using System;
+  using System.Threading.Tasks;
+  using Unity.VisualScripting;
+  using UnityEditor;
   using UnityEngine;
 
   /// <summary>
@@ -104,23 +107,15 @@ namespace Noise
       }
 
       // Generate the values of the map based on these grid points
-      for (int x = 0; x < width; x++)
+      Parallel.For(0, width, x =>
       {
         for (int y = 0; y < height; y++)
         {
           int cellX = Mathf.FloorToInt(x / cellWidth) + 1;
           int cellY = Mathf.FloorToInt(y / cellHeight) + 1;
-
-          float value = GetPixelValueFromCells(
-              cellGrid,
-              cellX,
-              cellY,
-              x,
-              y);
-
-          noiseMap[x, y] = value;
+          noiseMap[x, y] = GetPixelValueFromCells(cellGrid, cellX, cellY, x, y);
         }
-      }
+      });
 
       return noiseMap;
     }
@@ -151,15 +146,10 @@ namespace Noise
       int pointPositionX,
       int pointPositionY)
     {
-      Vector2Int cell = gridcells[cellPositionX, cellPositionY];
-      Vector2Int[] closestNeighbors = new Vector2Int[3];
-      Vector2Int[] neighbors = new Vector2Int[8];
-      Vector2Int point = new Vector2Int(pointPositionX, pointPositionY);
+      HeapCompareable<CellNeighbour> neighboursHeap = new HeapCompareable<CellNeighbour>();
 
-      for (int i = 0; i < closestNeighbors.Length; i++)
-      {
-        closestNeighbors[i] = new Vector2Int(-1000000, -1000000);
-      }
+      Vector2Int cell = gridcells[cellPositionX, cellPositionY];
+      Vector2Int point = new Vector2Int(pointPositionX, pointPositionY);
 
       for (int x = -1, i = 0; x <= 1; x++)
       {
@@ -171,29 +161,18 @@ namespace Noise
             continue;
           }
 
-          neighbors[i] = gridcells[cellPositionX + x, cellPositionY + y];
-
-          for (int n = 0; n < closestNeighbors.Length; n++)
-          {
-            if (Vector2Int.Distance(neighbors[i], point) < Vector2Int.Distance(closestNeighbors[n], point))
-            {
-              for (int cn = n; cn < closestNeighbors.Length - 1; cn++)
-              {
-                closestNeighbors[cn + 1] = closestNeighbors[cn];
-              }
-
-              closestNeighbors[n] = neighbors[i];
-              break;
-            }
-          }
+          Vector2Int neighbour = gridcells[cellPositionX + x, cellPositionY + y];
+          float distance = WNMathUtils.SqrDistance(neighbour, point);
+          CellNeighbour cellNeighbour = new CellNeighbour(neighbour, distance);
+          neighboursHeap.Insert(cellNeighbour);
         }
       }
 
-      float neigborCellDistanceA = Vector2Int.Distance(closestNeighbors[0], point);
-      float neigborCellDistanceB = Vector2Int.Distance(closestNeighbors[1], point);
-      float cellDistance = Vector2Int.Distance(cell, point);
+      CellNeighbour closestNeighbor = neighboursHeap.ExtractMin();
+      CellNeighbour secondClosestNeighbor = neighboursHeap.ExtractMin();
+      float cellDistance = WNMathUtils.SqrDistance(cell, point);
 
-      float[] distances = { neigborCellDistanceA, neigborCellDistanceB, cellDistance };
+      float[] distances = { closestNeighbor.Distance, secondClosestNeighbor.Distance, cellDistance };
       Array.Sort(distances);
 
       float minDistance = Mathf.Min(distances[0], distances[1]);
@@ -253,6 +232,23 @@ namespace Noise
       this.CellCountX = cellCountX;
       this.CellCountY = cellCountY;
       this.Seed = seed;
+    }
+  }
+
+  struct CellNeighbour : IComparable<CellNeighbour>
+  {
+    public Vector2Int Position { get; }
+    public float Distance { get; }
+
+    public CellNeighbour(Vector2Int position, float distance)
+    {
+      Position = position;
+      Distance = distance;
+    }
+
+    public int CompareTo(CellNeighbour other)
+    {
+      return Distance.CompareTo(other.Distance);
     }
   }
 }
