@@ -41,6 +41,9 @@ namespace Noise
     /// </summary>
     public const int DEFAULT_SEED = 0;
 
+    /// <summary>Default offset applied to the noise map coordinates.</summary>
+    public static readonly Vector2 DEFAULT_OFFSET = new Vector2(0f, 0f);
+
     /// <summary>
     /// Generates a cellular noise map using parameters defined in a <see cref="CellularNoise_SO"/> scriptable object.
     /// </summary>
@@ -53,7 +56,8 @@ namespace Noise
           cellularNoiseData.Height,
           cellularNoiseData.CellCountX,
           cellularNoiseData.CellCountY,
-          cellularNoiseData.Seed);
+          cellularNoiseData.Seed,
+          cellularNoiseData.Offset);
     }
 
     /// <summary>
@@ -68,7 +72,8 @@ namespace Noise
           cellularNoiseParameters.Height,
           cellularNoiseParameters.CellCountX,
           cellularNoiseParameters.CellCountY,
-          cellularNoiseParameters.Seed);
+          cellularNoiseParameters.Seed,
+          cellularNoiseParameters.Offset);
     }
 
     /// <summary>
@@ -80,14 +85,14 @@ namespace Noise
     /// <param name="cellCountY">The number of cells along the Y-axis.</param>
     /// <param name="seed">The seed for the random number generator, ensuring deterministic results.</param>
     /// <returns>A 2D array of float values representing the generated cellular noise map.</returns>
-    public static float[,] GenerateCellularNoiseMap(int width, int height, int cellCountX, int cellCountY, int seed)
+    public static float[,] GenerateCellularNoiseMap(int width, int height, int cellCountX, int cellCountY, int seed, Vector2 offset)
     {
+      System.Random prng = new System.Random(seed);
+
       // TODO: improve performance
       // Setup map and grid
       float[,] noiseMap = new float[width, height];
-      Vector2Int[,] cellGrid = new Vector2Int[
-          cellCountX + 2,
-          cellCountY + 2];
+      Vector2Int[,] cellGrid = new Vector2Int[cellCountX + 2, cellCountY + 2];
 
       // Generate the grids points
       int cellWidth = width / cellCountX;
@@ -97,8 +102,8 @@ namespace Noise
       {
         for (int y = -1; y <= cellCountY; y++)
         {
-          float xOffset = RandomUtils.GetRandomSeededFloat(seed);
-          float yOffset = RandomUtils.GetRandomSeededFloat(seed);
+          float xOffset = (float)prng.NextDouble() + offset.x;
+          float yOffset = (float)prng.NextDouble() + offset.y;
           int xPoint = Mathf.RoundToInt(cellWidth * xOffset);
           int yPoint = Mathf.RoundToInt(cellHeight * yOffset);
 
@@ -213,6 +218,11 @@ namespace Noise
     public int Seed { get; }
 
     /// <summary>
+    /// Gets the offset applied to the noise map.
+    /// </summary>
+    public Vector2 Offset { get; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="CellularNoiseParameters"/> struct with specified values.
     /// </summary>
     /// <param name="width">The width of the noise map. Defaults to <see cref="CellularNoise.DEFAULT_WIDTH"/>.</param>
@@ -220,18 +230,21 @@ namespace Noise
     /// <param name="cellCountX">The number of cells on the x axis that it generates based off <see cref="CellularNoise.DEFAULT_CELL_COUNT_X"/>.</param>
     /// <param name="cellCountY">The number of cells on the y axis that it generates based off <see cref="CellularNoise.DEFAULT_CELL_COUNT_Y"/>.</param>
     /// <param name="seed">The seed for the random number generator. Defaults to <see cref="CellularNoise.DEFAULT_SEED"/>.</param>
+    /// <param name="offset">Offset to apply to the map coordinates.</param>
     public CellularNoiseParameters(
         int width = CellularNoise.DEFAULT_WIDTH,
         int height = CellularNoise.DEFAULT_HEIGHT,
         int cellCountX = CellularNoise.DEFAULT_CELL_COUNT_X,
         int cellCountY = CellularNoise.DEFAULT_CELL_COUNT_Y,
-        int seed = CellularNoise.DEFAULT_SEED)
+        int seed = CellularNoise.DEFAULT_SEED,
+        Vector2? offset = null)
     {
       this.Width = width;
       this.Height = height;
       this.CellCountX = cellCountX;
       this.CellCountY = cellCountY;
       this.Seed = seed;
+      this.Offset = offset ?? CellularNoise.DEFAULT_OFFSET;
     }
   }
 
