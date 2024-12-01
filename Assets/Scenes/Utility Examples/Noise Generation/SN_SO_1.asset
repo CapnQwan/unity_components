@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63f350f9bc355fc42bbfae3f7b760d47, type: 3}
   m_Name: SN_SO_1
   m_EditorClassIdentifier: 
-  width: 0
-  height: 0
-  seed: 0
+  width: 200
+  height: 200
+  seed: 14
   offset: {x: 0, y: 0}
+  scale: 50
+  lacunarity: 1.19
+  persistance: 0.85
+  octaves: 17
+  normalizeMode: 0
