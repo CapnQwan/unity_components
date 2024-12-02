@@ -39,11 +39,17 @@ namespace Noise
     /// </summary>
     public const int DEFAULT_SEED = 0;
 
+    /// <summary>
+    /// Default invert for inverting the noise map.
+    /// </summary>
+    public const bool DEFAULT_INVERT = false;
+
     /// <summary>Default offset applied to the noise map coordinates.</summary>
     public static readonly Vector2 DEFAULT_OFFSET = new Vector2(0f, 0f);
 
     public static readonly Vector2Int[] NEIGHBOUR_POSITIONS =
     {
+      new Vector2Int(0, 0), // Center
       new Vector2Int(0, 1), // Top
       new Vector2Int(1, 1), // Top Right
       new Vector2Int(1, 0), // Right
@@ -67,6 +73,7 @@ namespace Noise
           cellularNoiseData.CellCountX,
           cellularNoiseData.CellCountY,
           cellularNoiseData.Seed,
+          cellularNoiseData.Invert,
           cellularNoiseData.Offset);
     }
 
@@ -83,6 +90,7 @@ namespace Noise
           cellularNoiseParameters.CellCountX,
           cellularNoiseParameters.CellCountY,
           cellularNoiseParameters.Seed,
+          cellularNoiseParameters.Invert,
           cellularNoiseParameters.Offset);
     }
 
@@ -95,7 +103,7 @@ namespace Noise
     /// <param name="cellCountY">The number of cells along the Y-axis.</param>
     /// <param name="seed">The seed for the random number generator, ensuring deterministic results.</param>
     /// <returns>A 2D array of float values representing the generated cellular noise map.</returns>
-    public static float[,] GenerateCellularNoiseMap(int width, int height, int cellCountX, int cellCountY, int seed, Vector2 offset)
+    public static float[,] GenerateCellularNoiseMap(int width, int height, int cellCountX, int cellCountY, int seed, bool invert, Vector2 offset)
     {
       System.Random prng = new System.Random(seed);
 
@@ -132,6 +140,11 @@ namespace Noise
           int cellX = Mathf.FloorToInt(x / cellWidth) + 1;
           int cellY = Mathf.FloorToInt(y / cellHeight) + 1;
           noiseMap[x, y] = GetPixelValueFromCells(cellGrid, cellX, cellY, x, y, maxCellDistance);
+
+          if (invert)
+          {
+            noiseMap[x, y] = 1 - noiseMap[x, y];
+          }
         }
       });
 
@@ -215,14 +228,14 @@ namespace Noise
     public int Seed { get; }
 
     /// <summary>
+    /// Gets the invert for inverting the noise map.
+    /// </summary>
+    public bool Invert { get; }
+
+    /// <summary>
     /// Gets the offset applied to the noise map.
     /// </summary>
     public Vector2 Offset { get; }
-
-    /// <summary>
-    /// Gets whether the map is to be inverted or not (inverts the normilization).
-    /// </summary>
-    public bool Invert { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CellularNoiseParameters"/> struct with specified values.
@@ -232,6 +245,7 @@ namespace Noise
     /// <param name="cellCountX">The number of cells on the x axis that it generates based off <see cref="CellularNoise.DEFAULT_CELL_COUNT_X"/>.</param>
     /// <param name="cellCountY">The number of cells on the y axis that it generates based off <see cref="CellularNoise.DEFAULT_CELL_COUNT_Y"/>.</param>
     /// <param name="seed">The seed for the random number generator. Defaults to <see cref="CellularNoise.DEFAULT_SEED"/>.</param>
+    /// <param name="invert">If the noise map is inverted. Defaults to <see cref="CellularNoise.DEFAULT_INVERT"/>.</param>
     /// <param name="offset">Offset to apply to the map coordinates.</param>
     public CellularNoiseParameters(
         int width = CellularNoise.DEFAULT_WIDTH,
@@ -239,6 +253,7 @@ namespace Noise
         int cellCountX = CellularNoise.DEFAULT_CELL_COUNT_X,
         int cellCountY = CellularNoise.DEFAULT_CELL_COUNT_Y,
         int seed = CellularNoise.DEFAULT_SEED,
+        bool invert = CellularNoise.DEFAULT_INVERT,
         Vector2? offset = null)
     {
       this.Width = width;
@@ -246,6 +261,7 @@ namespace Noise
       this.CellCountX = cellCountX;
       this.CellCountY = cellCountY;
       this.Seed = seed;
+      this.Invert = invert;
       this.Offset = offset ?? CellularNoise.DEFAULT_OFFSET;
     }
   }
