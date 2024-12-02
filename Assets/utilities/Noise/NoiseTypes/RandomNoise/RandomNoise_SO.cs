@@ -28,6 +28,9 @@ public class RandomNoise_SO : ScriptableObject
   [SerializeField]
   private int seed;
 
+  [SerializeField]
+  private bool invert;
+
   /// <summary>
   /// The offset applied to the noise map.
   /// </summary>
@@ -53,6 +56,8 @@ public class RandomNoise_SO : ScriptableObject
   /// Gets the offset applied to the noise map.
   /// </summary>
   public Vector2 Offset => this.offset;
+
+  public bool Invert => this.invert;
 
   /// <summary>
   /// Generates a noise map using the parameters defined in this scriptable object.

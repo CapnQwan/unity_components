@@ -115,3 +115,12 @@ dotnet_diagnostic.SA1312.severity = none
 
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = none
+
+# IDE0090: Use 'new(...)'
+dotnet_diagnostic.IDE0090.severity = silent
+
+# IDE0250: Make struct 'readonly'
+dotnet_diagnostic.IDE0250.severity = silent
+
+# IDE0130: Namespace does not match folder structure
+dotnet_diagnostic.IDE0130.severity = none

@@ -16,5 +16,5 @@ MonoBehaviour:
   height: 200
   seed: 2
   offset: {x: 0, y: 0}
-  cellsCountX: 20
-  cellsCountY: 10
+  cellsCountX: 8
+  cellsCountY: 8

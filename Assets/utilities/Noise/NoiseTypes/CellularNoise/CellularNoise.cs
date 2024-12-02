@@ -2,8 +2,6 @@ namespace Noise
 {
   using System;
   using System.Threading.Tasks;
-  using Unity.VisualScripting;
-  using UnityEditor;
   using UnityEngine;
 
   /// <summary>
@@ -43,6 +41,18 @@ namespace Noise
 
     /// <summary>Default offset applied to the noise map coordinates.</summary>
     public static readonly Vector2 DEFAULT_OFFSET = new Vector2(0f, 0f);
+
+    public static readonly Vector2Int[] NEIGHBOUR_POSITIONS =
+    {
+      new Vector2Int(0, 1), // Top
+      new Vector2Int(1, 1), // Top Right
+      new Vector2Int(1, 0), // Right
+      new Vector2Int(1, -1), // Bottom Right
+      new Vector2Int(0, -1), // Bottom
+      new Vector2Int(-1, -1), // Bottom Left
+      new Vector2Int(-1, 0), // Left
+      new Vector2Int(-1, 1), // Top Left
+    };
 
     /// <summary>
     /// Generates a cellular noise map using parameters defined in a <see cref="CellularNoise_SO"/> scriptable object.
@@ -97,7 +107,6 @@ namespace Noise
       // Generate the grids points
       int cellWidth = width / cellCountX;
       int cellHeight = height / cellCountY;
-
       for (int x = -1; x <= cellCountX; x++)
       {
         for (int y = -1; y <= cellCountY; y++)
@@ -111,14 +120,18 @@ namespace Noise
         }
       }
 
+      float maxCellDistance =
+        (Mathf.Pow(width / cellCountX, 2) +
+        Mathf.Pow(height / cellCountY, 2)) / 2;
+
       // Generate the values of the map based on these grid points
-      Parallel.For(0, width, x =>
+      _ = Parallel.For(0, width, x =>
       {
         for (int y = 0; y < height; y++)
         {
           int cellX = Mathf.FloorToInt(x / cellWidth) + 1;
           int cellY = Mathf.FloorToInt(y / cellHeight) + 1;
-          noiseMap[x, y] = GetPixelValueFromCells(cellGrid, cellX, cellY, x, y);
+          noiseMap[x, y] = GetPixelValueFromCells(cellGrid, cellX, cellY, x, y, maxCellDistance);
         }
       });
 
@@ -149,41 +162,25 @@ namespace Noise
       int cellPositionX,
       int cellPositionY,
       int pointPositionX,
-      int pointPositionY)
+      int pointPositionY,
+      float maxCellDistance)
     {
       HeapCompareable<CellNeighbour> neighboursHeap = new HeapCompareable<CellNeighbour>();
 
-      Vector2Int cell = gridcells[cellPositionX, cellPositionY];
       Vector2Int point = new Vector2Int(pointPositionX, pointPositionY);
 
-      for (int x = -1, i = 0; x <= 1; x++)
+      foreach (Vector2Int Neighbour in NEIGHBOUR_POSITIONS)
       {
-        for (int y = -1; y <= 1; y++, i++)
-        {
-          if (x == 0 && y == 0)
-          {
-            i--;
-            continue;
-          }
-
-          Vector2Int neighbour = gridcells[cellPositionX + x, cellPositionY + y];
-          float distance = WNMathUtils.SqrDistance(neighbour, point);
-          CellNeighbour cellNeighbour = new CellNeighbour(neighbour, distance);
-          neighboursHeap.Insert(cellNeighbour);
-        }
+        Vector2Int neighbour = gridcells[cellPositionX + Neighbour.x, cellPositionY + Neighbour.y];
+        float distance = WNMathUtils.SqrDistance(neighbour, point);
+        CellNeighbour cellNeighbour = new CellNeighbour(neighbour, distance);
+        neighboursHeap.Insert(cellNeighbour);
       }
 
       CellNeighbour closestNeighbor = neighboursHeap.ExtractMin();
-      CellNeighbour secondClosestNeighbor = neighboursHeap.ExtractMin();
-      float cellDistance = WNMathUtils.SqrDistance(cell, point);
 
-      float[] distances = { closestNeighbor.Distance, secondClosestNeighbor.Distance, cellDistance };
-      Array.Sort(distances);
-
-      float minDistance = Mathf.Min(distances[0], distances[1]);
-      float maxDistance = Mathf.Max(distances[0], distances[1]);
-
-      return minDistance / maxDistance;
+      // Normalize based on the maximum distance
+      return closestNeighbor.Distance / maxCellDistance;
     }
   }
 
@@ -221,6 +218,11 @@ namespace Noise
     /// Gets the offset applied to the noise map.
     /// </summary>
     public Vector2 Offset { get; }
+
+    /// <summary>
+    /// Gets whether the map is to be inverted or not (inverts the normilization).
+    /// </summary>
+    public bool Invert { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CellularNoiseParameters"/> struct with specified values.
