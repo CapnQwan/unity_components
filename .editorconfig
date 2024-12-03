@@ -124,3 +124,9 @@ dotnet_diagnostic.IDE0250.severity = silent
 
 # IDE0130: Namespace does not match folder structure
 dotnet_diagnostic.IDE0130.severity = none
+
+# SA1407: Arithmetic expressions should declare precedence
+dotnet_diagnostic.SA1407.severity = silent
+
+# IDE0011: Add braces
+dotnet_diagnostic.IDE0011.severity = none

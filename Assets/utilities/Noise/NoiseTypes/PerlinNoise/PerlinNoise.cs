@@ -148,7 +148,7 @@ namespace Noise
       // Thread-safe variables for min/max values
       object lockObject = new object();
 
-      System.Threading.Tasks.Parallel.For(0, height, y =>
+      _ = System.Threading.Tasks.Parallel.For(0, height, y =>
       {
         float localMax = float.MinValue;
         float localMin = float.MaxValue;
@@ -185,7 +185,7 @@ namespace Noise
         }
       });
 
-      System.Threading.Tasks.Parallel.For(0, height, y =>
+      _ = System.Threading.Tasks.Parallel.For(0, height, y =>
       {
         for (int x = 0; x < width; x++)
         {
