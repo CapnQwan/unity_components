@@ -16,7 +16,7 @@ MonoBehaviour:
   height: 200
   seed: 1
   invert: 0
-  offset: {x: 0, y: 0}
+  offset: {x: 6.62, y: 0}
   persistance: 2.16
   octaves: 5
   scale: 2.33

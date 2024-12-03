@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c2e6c97e0274c6418f05cc793dd4bf2, type: 3}
   m_Name: QuadMesh_SO
   m_EditorClassIdentifier: 
-  width: 1
-  height: 1
+  width: 4
+  height: 2

@@ -15,9 +15,10 @@ MonoBehaviour:
   width: 200
   height: 200
   seed: 27
-  offset: {x: 0, y: 0}
-  scale: 46.56
-  lacunarity: 1.19
-  persistance: 0.79
+  invert: 0
+  offset: {x: -42.1, y: 0}
+  scale: 46.1
+  lacunarity: 1.5
+  persistance: 0.7
   octaves: 17
   normalizeMode: 0

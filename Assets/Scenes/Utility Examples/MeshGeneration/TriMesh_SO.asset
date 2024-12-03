@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38b99c3f46d179041b5ed55c759d7996, type: 3}
   m_Name: TriMesh_SO
   m_EditorClassIdentifier: 
-  width: 1
-  height: 1
+  width: 5
+  height: 3

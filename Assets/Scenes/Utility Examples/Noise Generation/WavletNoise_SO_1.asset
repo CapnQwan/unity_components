@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 200
   height: 200
-  seed: 0
+  seed: 1
   invert: 0
   offset: {x: 0, y: 0}
-  scale: 1
+  scale: 0.77
+  lacunarity: 0.4
+  persistance: 1.4
+  octaves: 4
