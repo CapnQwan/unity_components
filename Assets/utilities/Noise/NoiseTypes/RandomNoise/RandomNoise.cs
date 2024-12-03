@@ -96,8 +96,8 @@ namespace Noise
       {
         for (int x = 0; x < width; x++)
         {
-          float sampleX = (x + noiseOffset.x) / 0.539f; // Is this 0.539f needed
-          float sampleY = (y + noiseOffset.y) / 0.539f; // Is this 0.539f needed
+          float sampleX = (x + noiseOffset.x) / 0.539f;
+          float sampleY = (y + noiseOffset.y) / 0.539f;
 
           noiseMap[x, y] = Mathf.PerlinNoise(sampleX, sampleY);
         }

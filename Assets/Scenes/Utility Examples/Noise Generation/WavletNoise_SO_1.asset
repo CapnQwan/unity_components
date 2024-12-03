@@ -9,6 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c2e6c97e0274c6418f05cc793dd4bf2, type: 3}
-  m_Name: PMQ_SO_1
+  m_Script: {fileID: 11500000, guid: ad4d35c03768aaf4f90ef2a201c8d1be, type: 3}
+  m_Name: WavletNoise_SO_1
   m_EditorClassIdentifier: 
+  width: 200
+  height: 200
+  seed: 0
+  invert: 0
+  offset: {x: 0, y: 0}
+  scale: 1

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// A scriptable object for storing parameters and generating a quad.
+/// A scriptable object for storing parameters and generating a tri.
 /// </summary>
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Mesh/Quad", order = 2)]
-public class QuadMesh_SO : Mesh_SO
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Mesh/Tri", order = 1)]
+public class TriMesh_SO : Mesh_SO
 {
   /// <summary>
   /// The width of the quad.
@@ -36,6 +36,6 @@ public class QuadMesh_SO : Mesh_SO
   /// <returns>A simple quad mesh.</returns>
   public override Mesh GenerateMesh()
   {
-    return QuadMeshGenerator.GenerateQuad(this);
+    return TriMeshGenerator.GenerateTri(this);
   }
 }

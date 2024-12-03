@@ -1,101 +1,132 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public static class WaveletNoise
+namespace Noise
 {
-  private static readonly float[] waveletCoefficients = { 0.125f, 0.375f, 0.375f, 0.125f };
+  using System;
+  using UnityEngine;
 
-  /// <summary>
-  /// Generates a 2D wavelet noise map.
-  /// </summary>
-  /// <param name="width">Width of the noise map.</param>
-  /// <param name="height">Height of the noise map.</param>
-  /// <param name="scale">Scale of the noise features.</param>
-  /// <returns>A 2D float array representing the wavelet noise map.</returns>
-  public static float[,] GenerateWaveletNoiseMap(int width, int height, float scale)
+  public static class WaveletNoise
   {
-    float[,] noiseMap = new float[width, height];
+    private static readonly float[] waveletCoefficients = {
+      0.000334f,-0.001528f, 0.000410f, 0.003545f,-0.000938f,-0.008233f, 0.002172f, 0.019120f,
+      -0.005040f,-0.044412f, 0.011655f, 0.103311f,-0.025936f,-0.243780f, 0.033979f, 0.655340f,
+      0.655340f, 0.033979f,-0.243780f,-0.025936f, 0.103311f, 0.011655f,-0.044412f,-0.005040f,
+      0.019120f, 0.002172f,-0.008233f,-0.000938f, 0.003545f, 0.000410f,-0.001528f, 0.000334f };
 
-    for (int x = 0; x < width; x++)
+    public static float[,] GenerateWaveletNoiseMap(WavletNoise_SO noiseScriptableObject)
     {
-      for (int y = 0; y < height; y++)
-      {
-        float sampleX = x / scale;
-        float sampleY = y / scale;
-        noiseMap[x, y] = GenerateWaveletNoise(sampleX, sampleY);
-      }
+      return GenerateWaveletNoiseMap(
+        noiseScriptableObject.Width,
+        noiseScriptableObject.Height,
+        noiseScriptableObject.Seed,
+        noiseScriptableObject.Scale,
+        noiseScriptableObject.Octaves,
+        noiseScriptableObject.Persistance,
+        noiseScriptableObject.Lacunarity);
     }
 
-    // Normalize to [0, 1] range
-    NormalizeNoiseMap(noiseMap);
-
-    return noiseMap;
-  }
-
-  /// <summary>
-  /// Generates wavelet noise for a single point.
-  /// </summary>
-  private static float GenerateWaveletNoise(float x, float y)
-  {
-    int x0 = Mathf.FloorToInt(x);
-    int y0 = Mathf.FloorToInt(y);
-
-    float dx = x - x0;
-    float dy = y - y0;
-
-    float result = 0f;
-
-    // Wavelet coefficients determine the blend from neighboring points
-    for (int i = -1; i <= 2; i++)
+    /// <summary>
+    /// Generates a 2D wavelet noise map.
+    /// </summary>
+    /// <param name="width">Width of the noise map.</param>
+    /// <param name="height">Height of the noise map.</param>
+    /// <param name="scale">Scale of the noise features.</param>
+    /// <returns>A 2D float array representing the wavelet noise map.</returns>
+    public static float[,] GenerateWaveletNoiseMap(int width, int height, int seed, float scale, int octaves, float persistence, float lacunarity)
     {
-      for (int j = -1; j <= 2; j++)
-      {
-        float contribution = waveletCoefficients[i + 1] * waveletCoefficients[j + 1];
-        result += contribution * HashGrid(x0 + i, y0 + j);
-      }
-    }
+      float[,] noiseMap = new float[width, height];
+      System.Random rand = new System.Random(seed);
+      float offsetX = (float)rand.NextDouble() * 1000f;
+      float offsetY = (float)rand.NextDouble() * 1000f;
 
-    return Mathf.Lerp(0, 1, result); // Clamp to range
-  }
-
-  /// <summary>
-  /// Hash function for pseudo-random values.
-  /// </summary>
-  private static float HashGrid(int x, int y)
-  {
-    int seed = (x * 73856093) ^ (y * 19349663); // Simple hash function
-    seed = (seed ^ (seed >> 13)) * 15731 + 789221;
-    return Mathf.Abs((seed & 0x7fffffff) / (float)0x7fffffff); // Normalize to [0, 1]
-  }
-
-  /// <summary>
-  /// Normalizes a 2D noise map to fit within [0, 1].
-  /// </summary>
-  private static void NormalizeNoiseMap(float[,] noiseMap)
-  {
-    int width = noiseMap.GetLength(0);
-    int height = noiseMap.GetLength(1);
-    float min = float.MaxValue;
-    float max = float.MinValue;
-
-    // Find min and max
-    for (int x = 0; x < width; x++)
-    {
       for (int y = 0; y < height; y++)
       {
-        if (noiseMap[x, y] < min) min = noiseMap[x, y];
-        if (noiseMap[x, y] > max) max = noiseMap[x, y];
+        for (int x = 0; x < width; x++)
+        {
+          float amplitude = 1f;
+          float frequency = 1f;
+          float noiseValue = 0f;
+
+          for (int octave = 0; octave < octaves; octave++)
+          {
+            float sampleX = (x + offsetX) / scale * frequency;
+            float sampleY = (y + offsetY) / scale * frequency;
+
+            noiseValue += WaveletNoisePoint(sampleX, sampleY) * amplitude;
+
+            amplitude *= persistence;
+            frequency *= lacunarity;
+          }
+
+          noiseMap[x, y] = noiseValue;
+        }
       }
+
+      return NormalizeNoiseMap(noiseMap, width, height);
     }
 
-    // Normalize to [0, 1]
-    for (int x = 0; x < width; x++)
+    /// <summary>
+    /// Generates wavelet noise for a single point.
+    /// </summary>
+    private static float WaveletNoisePoint(float x, float y)
     {
+      // Determine grid cell coordinates
+      int x0 = (int)Math.Floor(x);
+      int x1 = x0 + 1;
+      int y0 = (int)Math.Floor(y);
+      int y1 = y0 + 1;
+
+      // Interpolation weights
+      float wx = x - x0;
+      float wy = y - y0;
+
+      // Compute wavelet contributions from 4 corners
+      float value = 0.0f;
+      value += Wavelet(wx) * Wavelet(wy) * Noise(x0, y0);
+      value += Wavelet(wx - 1) * Wavelet(wy) * Noise(x1, y0);
+      value += Wavelet(wx) * Wavelet(wy - 1) * Noise(x0, y1);
+      value += Wavelet(wx - 1) * Wavelet(wy - 1) * Noise(x1, y1);
+
+      return value;
+    }
+
+    private static float Wavelet(float t)
+    {
+      // A simple wavelet basis function (Haar Wavelet example)
+      t = Math.Abs(t);
+      if (t < 1.0f) return 1.0f - t;
+      return 0.0f;
+    }
+
+    // Simple hash-based pseudorandom function for grid noise
+    private static float Noise(int x, int y)
+    {
+      int n = x + y * 57;
+      n = (n << 13) ^ n;
+      return (1.0f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0f);
+    }
+
+    /// <summary>
+    /// Normalizes a 2D noise map to fit within [0, 1].
+    /// </summary>
+    private static float[,] NormalizeNoiseMap(float[,] noiseMap, int width, int height)
+    {
+      float minValue = float.MaxValue;
+      float maxValue = float.MinValue;
+
+      foreach (var value in noiseMap)
+      {
+        if (value < minValue) minValue = value;
+        if (value > maxValue) maxValue = value;
+      }
+
       for (int y = 0; y < height; y++)
       {
-        noiseMap[x, y] = Mathf.InverseLerp(min, max, noiseMap[x, y]);
+        for (int x = 0; x < width; x++)
+        {
+          noiseMap[x, y] = (noiseMap[x, y] - minValue) / (maxValue - minValue);
+        }
       }
+
+      return noiseMap;
     }
   }
 }
