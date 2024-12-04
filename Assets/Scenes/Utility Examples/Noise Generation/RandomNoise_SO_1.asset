@@ -15,4 +15,5 @@ MonoBehaviour:
   width: 250
   height: 250
   seed: 10
+  invert: 0
   offset: {x: 0, y: 0}

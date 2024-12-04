@@ -46,45 +46,95 @@ public static class CubeMeshGenerator
 
     Vector3[] vertices = new Vector3[]
     {
-      new Vector3(-halfWidth, -halfHeight, -halfDepth), // Front-Bottom-left
-      new Vector3(halfWidth, -halfHeight, -halfDepth),  // Front-Bottom-right
-      new Vector3(-halfWidth, halfHeight, -halfDepth),  // Front-Top-left
-      new Vector3(halfWidth, halfHeight, -halfDepth),  // Front-Top-left
-      new Vector3(-halfWidth, -halfHeight, halfDepth), // Back-Bottom-left
-      new Vector3(halfWidth, -halfHeight, halfDepth),  // Back-Bottom-right
-      new Vector3(-halfWidth, halfHeight, halfDepth),  // Back-Top-left
-      new Vector3(halfWidth, halfHeight, halfDepth),  // Back-Top-left
+        // Front face
+        new Vector3(-halfWidth, -halfHeight, -halfDepth), // Bottom-left
+        new Vector3(halfWidth, -halfHeight, -halfDepth),  // Bottom-right
+        new Vector3(-halfWidth, halfHeight, -halfDepth),  // Top-left
+        new Vector3(halfWidth, halfHeight, -halfDepth),   // Top-right
+
+        // Back face
+        new Vector3(-halfWidth, -halfHeight, halfDepth),  // Bottom-left
+        new Vector3(halfWidth, -halfHeight, halfDepth),   // Bottom-right
+        new Vector3(-halfWidth, halfHeight, halfDepth),   // Top-left
+        new Vector3(halfWidth, halfHeight, halfDepth),    // Top-right
     };
 
     // Define the triangles for the quad.
     int[] triangles = new int[]
     {
-      0, 2, 1, // Bottom-left triangle
-      1, 2, 3, // Top-right triangle
-      4, 2, 0,
-      6, 2, 4,
-      6, 3, 2,
-      7, 3, 6,
-      7, 1, 3,
-      7, 5, 1,
+        // Front face
+        0, 2, 1,
+        1, 2, 3,
+
+        // Back face
+        5, 6, 4,
+        5, 7, 6,
+
+        // Left face
+        4, 6, 0,
+        0, 6, 2,
+
+        // Right face
+        1, 3, 5,
+        5, 3, 7,
+
+        // Top face
+        2, 6, 3,
+        3, 6, 7,
+
+        // Bottom face
+        4, 0, 5,
+        5, 0, 1
     };
 
     // Define the UV mapping coordinates for the quad.
     Vector2[] uvs = new Vector2[]
     {
-      new Vector2(0, 0), // Bottom-left
-      new Vector2(1, 0), // Bottom-right
-      new Vector2(0, 1), // Top-left
-      new Vector2(1, 1), // Top-right
+        // Front face
+        new Vector2(0, 0), new Vector2(1, 0),
+        new Vector2(0, 1), new Vector2(1, 1),
+
+        // Back face
+        new Vector2(0, 0), new Vector2(1, 0),
+        new Vector2(0, 1), new Vector2(1, 1),
+
+        // Left face
+        new Vector2(0, 0), new Vector2(1, 0),
+        new Vector2(0, 1), new Vector2(1, 1),
+
+        // Right face
+        new Vector2(0, 0), new Vector2(1, 0),
+        new Vector2(0, 1), new Vector2(1, 1),
+
+        // Top face
+        new Vector2(0, 0), new Vector2(1, 0),
+        new Vector2(0, 1), new Vector2(1, 1),
+
+        // Bottom face
+        new Vector2(0, 0), new Vector2(1, 0),
+        new Vector2(0, 1), new Vector2(1, 1)
     };
 
     // Define the normals for the quad (all facing backward).
     Vector3[] normals = new Vector3[]
     {
-        Vector3.back,
-        Vector3.back,
-        Vector3.back,
-        Vector3.back,
+        // Front face
+        Vector3.back, Vector3.back, Vector3.back, Vector3.back,
+
+        // Back face
+        Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward,
+
+        // Left face
+        Vector3.left, Vector3.left, Vector3.left, Vector3.left,
+
+        // Right face
+        Vector3.right, Vector3.right, Vector3.right, Vector3.right,
+
+        // Top face
+        Vector3.up, Vector3.up, Vector3.up, Vector3.up,
+
+        // Bottom face
+        Vector3.down, Vector3.down, Vector3.down, Vector3.down
     };
 
     // Assign the generated data to the mesh.

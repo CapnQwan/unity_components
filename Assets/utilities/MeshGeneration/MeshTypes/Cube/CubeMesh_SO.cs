@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// A scriptable object for storing parameters and generating a cube.
 /// </summary>
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Mesh/Cube", order = 3)]
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Mesh/Cube", order = 4)]
 public class CubeMesh_SO : Mesh_SO
 {
   /// <summary>
