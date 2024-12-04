@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// A scriptable object for storing parameters and generating a sphere.
 /// </summary>
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Mesh/Sphere", order = 3)]
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Mesh/Sphere", order = 5)]
 public class SphereMesh_SO : Mesh_SO
 {
   /// <summary>

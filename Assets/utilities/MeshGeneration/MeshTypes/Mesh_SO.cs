@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -7,6 +6,8 @@ using UnityEngine;
 /// </summary>
 public class Mesh_SO : ScriptableObject
 {
+  public Action OnValuesChanged;
+
   /// <summary>
   /// Generates a simple quad mesh.
   /// </summary>

@@ -15,7 +15,16 @@ public class ProceduralMeshRenderer : MonoBehaviour
     this._meshFilter = this.gameObject.AddComponent<MeshFilter>();
     this._meshRenderer = this.gameObject.AddComponent<MeshRenderer>();
     this._meshRenderer.material = new Material(Shader.Find("Standard"));
-    this._mesh = this.meshScriptableObject.GenerateMesh();
-    this._meshFilter.mesh = this._mesh;
+    this.meshScriptableObject.OnValuesChanged += UpdateMesh;
+    UpdateMesh();
+  }
+
+  private void UpdateMesh()
+  {
+    if (this._meshFilter)
+    {
+      this._mesh = this.meshScriptableObject.GenerateMesh();
+      this._meshFilter.mesh = this._mesh;
+    }
   }
 }

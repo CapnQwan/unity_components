@@ -105,36 +105,16 @@ public static class CubeMeshGenerator
         // Right face
         new Vector2(0, 0), new Vector2(1, 0),
         new Vector2(0, 1), new Vector2(1, 1),
-
-        // Top face
-        new Vector2(0, 0), new Vector2(1, 0),
-        new Vector2(0, 1), new Vector2(1, 1),
-
-        // Bottom face
-        new Vector2(0, 0), new Vector2(1, 0),
-        new Vector2(0, 1), new Vector2(1, 1)
     };
 
     // Define the normals for the quad (all facing backward).
     Vector3[] normals = new Vector3[]
     {
         // Front face
-        Vector3.back, Vector3.back, Vector3.back, Vector3.back,
+        Vector3.one * -1f, Vector3.one * -1f, Vector3.one * -1f, Vector3.one * -1f,
 
         // Back face
-        Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward,
-
-        // Left face
-        Vector3.left, Vector3.left, Vector3.left, Vector3.left,
-
-        // Right face
-        Vector3.right, Vector3.right, Vector3.right, Vector3.right,
-
-        // Top face
-        Vector3.up, Vector3.up, Vector3.up, Vector3.up,
-
-        // Bottom face
-        Vector3.down, Vector3.down, Vector3.down, Vector3.down
+        Vector3.one, Vector3.one, Vector3.one, Vector3.one,
     };
 
     // Assign the generated data to the mesh.

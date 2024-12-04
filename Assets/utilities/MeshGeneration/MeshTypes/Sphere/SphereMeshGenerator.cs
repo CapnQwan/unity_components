@@ -12,7 +12,7 @@ public static class SphereMeshGenerator
   /// This method uses caching to avoid generating multiple identical meshes.
   /// </summary>
   /// <returns>A Unity <see cref="Mesh"/> representing a Spere with a radius of 1.</returns>
-  public static Mesh GenerateSimpleCube()
+  public static Mesh GenerateSimpleSphere()
   {
     if (!_cachedMesh)
     {
