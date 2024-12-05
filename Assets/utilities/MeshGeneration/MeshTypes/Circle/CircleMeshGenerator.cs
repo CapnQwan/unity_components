@@ -75,7 +75,7 @@ public static class CircleMeshGenerator
     // Assign the generated data to the mesh.
     mesh.vertices = vertices;
     mesh.triangles = triangles;
-    //mesh.uv = uvs;
+    mesh.uv = uvs;
     mesh.normals = normals;
 
     return mesh;

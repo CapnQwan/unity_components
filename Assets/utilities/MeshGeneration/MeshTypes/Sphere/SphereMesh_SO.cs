@@ -29,6 +29,21 @@ public class SphereMesh_SO : Mesh_SO
   public int Sections => this.sections;
 
   /// <summary>
+  /// Ensures sections value cannot be below 3.
+  /// </summary>
+  private void OnValidate()
+  {
+    if (radius <= 0)
+    {
+      radius = 0.01f;
+    }
+    if (sections < 3)
+    {
+      sections = 3;
+    }
+  }
+
+  /// <summary>
   /// Generates a simple quad mesh.
   /// </summary>
   /// <returns>A simple quad mesh.</returns>

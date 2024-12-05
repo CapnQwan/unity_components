@@ -145,3 +145,6 @@ dotnet_diagnostic.CA1707.severity = none
 
 # IDE0044: Add readonly modifier
 dotnet_diagnostic.IDE0044.severity = none
+
+# IDE0048: Add parentheses for clarity
+dotnet_diagnostic.IDE0048.severity = silent
