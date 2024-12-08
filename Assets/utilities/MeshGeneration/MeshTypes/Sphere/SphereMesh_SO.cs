@@ -16,7 +16,7 @@ public class SphereMesh_SO : Mesh_SO
   /// The number of sections (Tris) that make up the sphere.
   /// </summary>
   [SerializeField]
-  private int sections = 1;
+  private int sections = 2;
 
   /// <summary>
   /// Gets the radius of the sphere.
@@ -37,9 +37,9 @@ public class SphereMesh_SO : Mesh_SO
     {
       radius = 0.01f;
     }
-    if (sections < 3)
+    if (sections < 2)
     {
-      sections = 3;
+      sections = 2;
     }
   }
 
