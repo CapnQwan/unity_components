@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -73,23 +74,29 @@ public static class SphereMeshGenerator
       float yCos = Mathf.Clamp(Mathf.Cos((r - (sections * 0.5f)) * SectionAngleInRadians), -1f, 1f);
       float yPosition = Mathf.Clamp(Mathf.Cos(r * SectionAngleInRadians), -1f, 1f) * radius;
 
-      for (int c = 1; c <= columns; c++, i++, t++)
+      _ = Parallel.For(1, columns + 1, c =>
       {
+        int localI = i + c - 1;
+        int localT = t + c - 1;
+
         float xPosition = Mathf.Clamp(Mathf.Cos(c * SectionAngleInRadians), -1f, 1f) * yCos * radius;
         float zPosition = Mathf.Clamp(Mathf.Sin(c * SectionAngleInRadians), -1f, 1f) * yCos * radius;
 
-        vertices[i + 1] = new Vector3(xPosition, yPosition, zPosition);
+        vertices[localI + 1] = new Vector3(xPosition, yPosition, zPosition);
 
-        triangles[i * 6] = math.clamp(t, 0, triCount);
-        triangles[i * 6 + 1] = WNMathUtils.WrapInt(t + columns + 1, (r - 1) * columns + 1, r * columns);
-        triangles[i * 6 + 2] = t + columns;
-        triangles[i * 6 + 3] = WNMathUtils.WrapInt(t + columns - 1, (r - 1) * columns + 1, r * columns);
-        triangles[i * 6 + 4] = WNMathUtils.WrapInt(t + columns, t + columns, t + columns * 2 - 1);
-        triangles[i * 6 + 5] = math.clamp(t + columns * 2, 0, vertexCount - 1);
+        triangles[localI * 6] = math.clamp(localT, 0, triCount);
+        triangles[localI * 6 + 1] = WNMathUtils.WrapInt(localT + columns + 1, (r - 1) * columns + 1, r * columns);
+        triangles[localI * 6 + 2] = localT + columns;
+        triangles[localI * 6 + 3] = WNMathUtils.WrapInt(localT + columns - 1, (r - 1) * columns + 1, r * columns);
+        triangles[localI * 6 + 4] = WNMathUtils.WrapInt(localT + columns, localT + columns, localT + columns * 2 - 1);
+        triangles[localI * 6 + 5] = math.clamp(localT + columns * 2, 0, vertexCount - 1);
 
-        uvs[i + 1] = new Vector2((c - 1) / (columns - 1), (r - 1) / (rows - 1));
-        normals[i + 1] = Vector3.forward;
-      }
+        uvs[localI + 1] = new Vector2((c - 1) / (columns - 1), (r - 1) / (rows - 1));
+        normals[localI + 1] = Vector3.forward;
+      });
+
+      i += columns;
+      t += columns;
     }
 
     // Assign the generated data to the mesh.
