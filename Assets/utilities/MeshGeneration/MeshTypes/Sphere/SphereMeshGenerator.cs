@@ -1,8 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public static class SphereMeshGenerator

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public static class GridMeshGenerator
@@ -47,26 +48,30 @@ public static class GridMeshGenerator
     Vector2[] uvs = new Vector2[vertexCount];
     Vector3[] normals = new Vector3[vertexCount];
 
-    for (int x = 0, i = 0, t = 0; x < xVerticies; x++)
+    _ = Parallel.For(0, xVerticies, x =>
+    //for (int x = 0, i = 0, t = 0; x < xVerticies; x++)
     {
-      for (int y = 0; y < yVerticies; y++, i++)
+      _ = Parallel.For(0, yVerticies, y =>
+      //for (int y = 0; y < yVerticies; y++, i++)
       {
-        vertices[i] = new Vector3(x * vertexWidth, noiseMap[x, y] * heightMapScale, y * vertexHeight);
-        uvs[i] = new Vector2(x / xVerticies, y / yVerticies);
-        normals[i] = Vector3.back;
+        int instanceI = x * xVerticies + y;
+        int instanceT = x * segmentsX + y;
+
+        vertices[instanceI] = new Vector3(x * vertexWidth, noiseMap[x, y] * heightMapScale, y * vertexHeight);
+        uvs[instanceI] = new Vector2(x / xVerticies, y / yVerticies);
+        normals[instanceI] = Vector3.back;
 
         if (x != segmentsX && y != segmentsY)
         {
-          triangles[t * 6] = i;
-          triangles[t * 6 + 1] = i + 1;
-          triangles[t * 6 + 2] = i + xVerticies;
-          triangles[t * 6 + 3] = i + xVerticies;
-          triangles[t * 6 + 4] = i + 1;
-          triangles[t * 6 + 5] = i + xVerticies + 1;
-          t++;
+          triangles[instanceT * 6] = instanceI;
+          triangles[instanceT * 6 + 1] = instanceI + 1;
+          triangles[instanceT * 6 + 2] = instanceI + xVerticies;
+          triangles[instanceT * 6 + 3] = instanceI + xVerticies;
+          triangles[instanceT * 6 + 4] = instanceI + 1;
+          triangles[instanceT * 6 + 5] = instanceI + xVerticies + 1;
         }
-      }
-    }
+      });
+    });
 
     // Assign the generated data to the mesh.
     mesh.vertices = vertices;
