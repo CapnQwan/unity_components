@@ -38,9 +38,9 @@ public static class SphereMeshGenerator
     {
       throw new ArgumentException("Sections must be greater than 0.");
     }
-    if (sections < 3)
+    if (sections < 2)
     {
-      throw new ArgumentException("Sections must be 3 or greater.");
+      throw new ArgumentException("Sections must be 2 or greater.");
     }
 
     Mesh mesh = new Mesh

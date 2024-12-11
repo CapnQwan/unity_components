@@ -9,8 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea1c3becbc0b3b947b61dea6fdb3f335, type: 3}
-  m_Name: SphereMesh_SO_1
+  m_Script: {fileID: 11500000, guid: 401807bd0f4f9cd42904ef1b3613787a, type: 3}
+  m_Name: GridMesh_SO_1
   m_EditorClassIdentifier: 
-  radius: 1
-  sections: 29
+  width: 8
+  height: 8
+  segmentsX: 50
+  segmentsY: 50
+  heightMapScale: 4.52
+  heightMap: {fileID: 11400000, guid: 2523f9fda7857fb4396c43f05f3f005e, type: 2}
