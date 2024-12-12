@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401807bd0f4f9cd42904ef1b3613787a, type: 3}
   m_Name: GridMesh_SO_1
   m_EditorClassIdentifier: 
-  width: 15.43
-  height: 15.05
+  width: 8
+  height: 8
   segmentsX: 100
   segmentsY: 100
-  heightMapScale: 4.76
-  heightMap: {fileID: 11400000, guid: bea406fe34b8141419a49a5bc5a42ddb, type: 2}
+  heightMapScale: 3
+  heightMap: {fileID: 11400000, guid: 2523f9fda7857fb4396c43f05f3f005e, type: 2}

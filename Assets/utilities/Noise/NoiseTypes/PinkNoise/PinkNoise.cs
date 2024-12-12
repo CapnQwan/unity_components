@@ -4,6 +4,16 @@ namespace Noise
 
   public static class PinkNoise
   {
+    public static float[,] GeneratePinkNoiseMap(int width, int height, PinkNoise_SO noiseScriptableObject)
+    {
+      return GeneratePinkNoiseMap(
+        width,
+        height,
+        noiseScriptableObject.Octaves,
+        noiseScriptableObject.Persistance,
+        noiseScriptableObject.Scale);
+    }
+
     public static float[,] GeneratePinkNoiseMap(PinkNoise_SO noiseScriptableObject)
     {
       return GeneratePinkNoiseMap(

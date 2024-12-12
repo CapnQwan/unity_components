@@ -63,6 +63,15 @@ public class RandomNoise_SO : ScriptableObject
   /// Generates a noise map using the parameters defined in this scriptable object.
   /// </summary>
   /// <returns>A 2D array of floats representing the generated noise map.</returns>
+  public virtual float[,] GenerateNoiseMap(int width, int height)
+  {
+    return Noise.RandomNoise.GenerateRandomNoiseMap(width, height, this);
+  }
+
+  /// <summary>
+  /// Generates a noise map using the parameters defined in this scriptable object.
+  /// </summary>
+  /// <returns>A 2D array of floats representing the generated noise map.</returns>
   public virtual float[,] GenerateNoiseMap()
   {
     return Noise.RandomNoise.GenerateRandomNoiseMap(this);

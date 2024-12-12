@@ -43,6 +43,26 @@ namespace Noise
     /// </summary>
     /// <param name="noiseScriptableObject">The scriptable object containing noise parameters.</param>
     /// <returns>A 2D array of float values representing the generated noise map.</returns>
+    public static float[,] GeneratePerlinNoiseMap(int width, int height, PerlinNoise_SO noiseScriptableObject)
+    {
+      Debug.Log("GENERATING NOISE MAP WITH EXTERNAL DIMENSIONS");
+      return GeneratePerlinNoiseMap(
+        width,
+        height,
+        noiseScriptableObject.Seed,
+        noiseScriptableObject.Octaves,
+        noiseScriptableObject.Scale,
+        noiseScriptableObject.Lacunarity,
+        noiseScriptableObject.Persistance,
+        noiseScriptableObject.NormalizeMode,
+        noiseScriptableObject.Offset);
+    }
+
+    /// <summary>
+    /// Generates a Perlin noise map using a <see cref="PerlinNoise_SO"/> scriptable object.
+    /// </summary>
+    /// <param name="noiseScriptableObject">The scriptable object containing noise parameters.</param>
+    /// <returns>A 2D array of float values representing the generated noise map.</returns>
     public static float[,] GeneratePerlinNoiseMap(PerlinNoise_SO noiseScriptableObject)
     {
       return GeneratePerlinNoiseMap(

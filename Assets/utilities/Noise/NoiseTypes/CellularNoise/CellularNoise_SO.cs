@@ -37,4 +37,14 @@ public class CellularNoise_SO : RandomNoise_SO
   {
     return Noise.CellularNoise.GenerateCellularNoiseMap(this);
   }
+
+  /// <summary>
+  /// Generates a Cellular noise map based on the configured parameters.
+  /// </summary>
+  /// <returns>A 2D array of float values representing the Perlin noise map.</returns>
+  public override float[,] GenerateNoiseMap(int width, int height)
+  {
+    Debug.Log("GENERATE NOISE MAP WITH EXTERNAL WIDTH AND HEIGHT");
+    return Noise.CellularNoise.GenerateCellularNoiseMap(width, height, this);
+  }
 }

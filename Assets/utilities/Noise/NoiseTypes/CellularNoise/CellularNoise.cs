@@ -65,6 +65,23 @@ namespace Noise
     /// </summary>
     /// <param name="cellularNoiseData">The scriptable object containing cellular noise parameters.</param>
     /// <returns>A 2D array of float values representing the generated cellular noise map.</returns>
+    public static float[,] GenerateCellularNoiseMap(int width, int height, CellularNoise_SO cellularNoiseData)
+    {
+      return GenerateCellularNoiseMap(
+          width,
+          height,
+          cellularNoiseData.CellCountX,
+          cellularNoiseData.CellCountY,
+          cellularNoiseData.Seed,
+          cellularNoiseData.Invert,
+          cellularNoiseData.Offset);
+    }
+
+    /// <summary>
+    /// Generates a cellular noise map using parameters defined in a <see cref="CellularNoise_SO"/> scriptable object.
+    /// </summary>
+    /// <param name="cellularNoiseData">The scriptable object containing cellular noise parameters.</param>
+    /// <returns>A 2D array of float values representing the generated cellular noise map.</returns>
     public static float[,] GenerateCellularNoiseMap(CellularNoise_SO cellularNoiseData)
     {
       return GenerateCellularNoiseMap(

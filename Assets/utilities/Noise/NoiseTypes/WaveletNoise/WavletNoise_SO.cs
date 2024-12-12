@@ -56,6 +56,15 @@ public class WavletNoise_SO : RandomNoise_SO
   /// Generates a Wavlet noise map based on the configured parameters.
   /// </summary>
   /// <returns>A 2D array of float values representing the Wavlet noise map.</returns>
+  public override float[,] GenerateNoiseMap(int width, int height)
+  {
+    return Noise.WaveletNoise.GenerateWaveletNoiseMap(width, height, this);
+  }
+
+  /// <summary>
+  /// Generates a Wavlet noise map based on the configured parameters.
+  /// </summary>
+  /// <returns>A 2D array of float values representing the Wavlet noise map.</returns>
   public override float[,] GenerateNoiseMap()
   {
     return Noise.WaveletNoise.GenerateWaveletNoiseMap(this);

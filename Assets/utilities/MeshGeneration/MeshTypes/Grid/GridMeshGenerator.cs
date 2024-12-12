@@ -6,7 +6,10 @@ public static class GridMeshGenerator
 {
   public static Mesh GenerateGridMesh(GridMesh_SO meshScriptableObject)
   {
-    float[,] heightMap = meshScriptableObject.HeightMap?.GenerateNoiseMap();
+    float[,] heightMap = meshScriptableObject.HeightMap?.GenerateNoiseMap(
+      meshScriptableObject.SegmentsX + 1,
+      meshScriptableObject.SegmentsY + 1);
+
     return GenerateGridMesh(
       meshScriptableObject.Width,
       meshScriptableObject.Height,

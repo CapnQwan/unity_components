@@ -34,6 +34,15 @@ public class BlueNoise_SO : RandomNoise_SO
   /// Generates a Pink noise map based on the configured parameters.
   /// </summary>
   /// <returns>A 2D array of float values representing the Perlin noise map.</returns>
+  public override float[,] GenerateNoiseMap(int width, int height)
+  {
+    return Noise.BlueNoise.GenerateBlueNoiseMap(width, height, this);
+  }
+
+  /// <summary>
+  /// Generates a Pink noise map based on the configured parameters.
+  /// </summary>
+  /// <returns>A 2D array of float values representing the Perlin noise map.</returns>
   public override float[,] GenerateNoiseMap()
   {
     return Noise.BlueNoise.GenerateBlueNoiseMap(this);

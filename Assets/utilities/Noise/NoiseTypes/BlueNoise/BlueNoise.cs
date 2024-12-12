@@ -8,6 +8,15 @@ namespace Noise
 
   public static class BlueNoise
   {
+    public static float[,] GenerateBlueNoiseMap(int width, int height, BlueNoise_SO nosieScriptableObject)
+    {
+      return GenerateBlueNoiseMap(
+        width,
+        height,
+        nosieScriptableObject.MinDistance,
+        nosieScriptableObject.MaxAttempts);
+    }
+
     public static float[,] GenerateBlueNoiseMap(BlueNoise_SO nosieScriptableObject)
     {
       return GenerateBlueNoiseMap(

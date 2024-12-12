@@ -56,6 +56,25 @@ namespace Noise
     /// </summary>
     /// <param name="noiseScriptableObject">The scriptable object containing noise parameters.</param>
     /// <returns>A 2D array of float values representing the generated noise map.</returns>
+    public static float[,] GenerateSimplexNoiseMap(int width, int height, SimplexNoise_SO noiseScriptableObject)
+    {
+      return GenerateSimplexNoiseMap(
+        width,
+        height,
+        noiseScriptableObject.Seed,
+        noiseScriptableObject.Octaves,
+        noiseScriptableObject.Scale,
+        noiseScriptableObject.Lacunarity,
+        noiseScriptableObject.Persistance,
+        noiseScriptableObject.NormalizeMode,
+        noiseScriptableObject.Offset);
+    }
+
+    /// <summary>
+    /// Generates a Simplex noise map using a <see cref="SimplexNoise_SO"/> scriptable object.
+    /// </summary>
+    /// <param name="noiseScriptableObject">The scriptable object containing noise parameters.</param>
+    /// <returns>A 2D array of float values representing the generated noise map.</returns>
     public static float[,] GenerateSimplexNoiseMap(SimplexNoise_SO noiseScriptableObject)
     {
       return GenerateSimplexNoiseMap(
@@ -149,7 +168,7 @@ namespace Noise
       // Thread-safe variables for min/max values
       object lockObject = new object();
 
-      System.Threading.Tasks.Parallel.For(0, height, y =>
+      _ = System.Threading.Tasks.Parallel.For(0, height, y =>
      {
        float localMax = float.MinValue;
        float localMin = float.MaxValue;
@@ -189,7 +208,7 @@ namespace Noise
      });
 
       // Normalize the noise map
-      System.Threading.Tasks.Parallel.For(0, height, y =>
+      _ = System.Threading.Tasks.Parallel.For(0, height, y =>
       {
         for (int x = 0; x < width; x++)
         {
