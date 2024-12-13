@@ -16,5 +16,5 @@ MonoBehaviour:
   height: 8
   segmentsX: 100
   segmentsY: 100
-  heightMapScale: 3
-  heightMap: {fileID: 11400000, guid: 2523f9fda7857fb4396c43f05f3f005e, type: 2}
+  heightMapScale: 2.72
+  heightMap: {fileID: 11400000, guid: 99a643f37cd61514fb013bd21b4d0fa2, type: 2}
