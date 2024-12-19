@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 401807bd0f4f9cd42904ef1b3613787a, type: 3}
-  m_Name: GridMesh_SO_1
+  m_Script: {fileID: 11500000, guid: ff2c87c29c91ac443a73c55734a77b8b, type: 3}
+  m_Name: PointMesh_SO
   m_EditorClassIdentifier: 
-  width: 8
-  height: 8
-  segmentsX: 200
-  segmentsY: 200
-  heightMapScale: 2.72
-  heightMap: {fileID: 11400000, guid: 99a643f37cd61514fb013bd21b4d0fa2, type: 2}
+  radius: 0.1
+  sections: 25

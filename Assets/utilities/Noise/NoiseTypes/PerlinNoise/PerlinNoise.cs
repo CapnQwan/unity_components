@@ -45,7 +45,6 @@ namespace Noise
     /// <returns>A 2D array of float values representing the generated noise map.</returns>
     public static float[,] GeneratePerlinNoiseMap(int width, int height, PerlinNoise_SO noiseScriptableObject)
     {
-      Debug.Log("GENERATING NOISE MAP WITH EXTERNAL DIMENSIONS");
       return GeneratePerlinNoiseMap(
         width,
         height,

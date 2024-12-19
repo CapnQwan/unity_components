@@ -84,7 +84,6 @@ public class PerlinNoise_SO : RandomNoise_SO
   /// <returns>A 2D array of float values representing the Perlin noise map.</returns>
   public override float[,] GenerateNoiseMap(int width, int height)
   {
-    Debug.Log("GENERATE NOISE MAP WITH EXTERNAL DIMENSIONS");
     return Noise.PerlinNoise.GeneratePerlinNoiseMap(width, height, this);
   }
 

@@ -44,7 +44,6 @@ public class CellularNoise_SO : RandomNoise_SO
   /// <returns>A 2D array of float values representing the Perlin noise map.</returns>
   public override float[,] GenerateNoiseMap(int width, int height)
   {
-    Debug.Log("GENERATE NOISE MAP WITH EXTERNAL WIDTH AND HEIGHT");
     return Noise.CellularNoise.GenerateCellularNoiseMap(width, height, this);
   }
 }
