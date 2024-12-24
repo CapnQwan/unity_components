@@ -340,9 +340,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Prefab: {fileID: 5601100186453632130, guid: e79ee2c638b415f47a4ba8dc2c051c3c, type: 3}
   NoiseScriptableObject: {fileID: 11400000, guid: 2523f9fda7857fb4396c43f05f3f005e, type: 2}
-  Width: 50
-  Height: 50
+  Width: 25
+  Height: 25
   Threshold: 0.46
+  IsRenderingPoints: 0
+  IsRenderingMesh: 1
 --- !u!4 &2130606162
 Transform:
   m_ObjectHideFlags: 0
