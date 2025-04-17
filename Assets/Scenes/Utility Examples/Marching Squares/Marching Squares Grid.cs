@@ -121,8 +121,6 @@ public class MarchingSquaresGrid : MonoBehaviour
 
     List<Vector3> vertices = new List<Vector3>();
     List<int> triangles = new List<int>();
-    List<Vector2> uvs = new List<Vector2>();
-    List<Vector3> normals = new List<Vector3>();
 
     for (int x = 0; x < Width - 1; x++)
     {
@@ -143,8 +141,6 @@ public class MarchingSquaresGrid : MonoBehaviour
     // Assign the generated data to the mesh.
     mesh.vertices = vertices.ToArray();
     mesh.triangles = triangles.ToArray();
-    mesh.uv = uvs.ToArray();
-    mesh.normals = normals.ToArray();
 
     return mesh;
   }
@@ -171,7 +167,13 @@ public class MarchingSquaresGrid : MonoBehaviour
       vertices[i / 3] = new Vector3(x + vertexOffsets[i], vertexOffsets[i + 1], y + vertexOffsets[i + 2]);
     }
 
-    return new MarchingSquaresSegment(vertices, triangles);
+    int[] tris = new int[triangles.Length];
+    for (int i = 0; i < triangles.Length; i++)
+    {
+      tris[i] = triangles[i];
+    }
+
+    return new MarchingSquaresSegment(vertices, tris);
   }
 
   public struct MarchingSquaresSegment
@@ -189,167 +191,167 @@ public class MarchingSquaresGrid : MonoBehaviour
   }
 
   private static readonly Dictionary<int, (int[], float[])> SegmentConfigs = new()
-{
-    { 0, (new int[0], new float[0]) },
-    {
-      1, (new int[] { 0, 2, 1 },
-          new float[]
-          {
-            0f, 0f, 0f,
-            0.5f, 0f, 0f,
-            0f, 0f, 0.5f,
-          })
-    },
-    {
-      2, (new int[] { 0, 1, 2 },
-          new float[]
-          {
-            1f, 0f, 0f,
-            0.5f, 0f, 0f,
-            1f, 0f, 0.5f,
-          })
-    },
-    {
-      3, (new int[] { 0, 1, 2, 2, 1, 3 },
-          new float[]
-          {
-            0f, 0f, 0f,
-            0f, 0f, 0.5f,
-            1f, 0f, 0f,
-            1f, 0f, 0.5f,
-          })
-    },
-    {
-      4, (new int[] { 0, 1, 2 },
-          new float[]
-          {
-            0f, 0f, 1f,
-            0.5f, 0f, 1f,
-            0f, 0f, 0.5f,
-          })
-    },
-    {
-      5, (new int[] { 0, 1, 2, 2, 1, 3 },
-          new float[]
-          {
-            0f, 0f, 0f,
-            0f, 0f, 1f,
-            0.5f, 0f, 0f,
-            0.5f, 0f, 1f,
-          })
-    },
-    {
-      6, (new int[] { 0, 1, 2, 3, 5, 4 },
-          new float[]
-          {
-            0f, 0f, 0.5f,
-            0f, 0f, 1f,
-            0.5f, 0f, 1f,
-            0.5f, 0f, 0f,
-            1f, 0f, 0f,
-            1f, 0f, 0.5f,
-          })
-    },
-    {
-      7, (new int[] { 0, 2, 1, 1, 3, 5, 2, 4, 3, 3, 4, 5 },
-          new float[]
-          {
-            0f, 0f, 0f,
-            1f, 0f, 0f,
-            0f, 0f, 1f,
-            0.5f, 0f, 0.5f,
-            0.5f, 0f, 1f,
-            1f, 0f, 0.5f,
-          })
-    },
-    {
-      8, (new int[] { 0, 1, 2 },
-          new float[]
-          {
-            0.5f, 0f, 1f,
-            1f, 0f, 1f,
-            1f, 0f, 0.5f,
-          })
-    },
-    {
-      9, (new int[] { 0, 1, 2, 3, 4, 5 },
-          new float[]
-          {
-            0f, 0f, 0f,
-            0f, 0f, 0.5f,
-            0.5f, 0f, 0f,
-            0.5f, 0f, 1f,
-            1f, 0f, 1f,
-            1f, 0f, 0.5f,
-          })
-    },
-    {
-      10, (new int[] { 0, 1, 2, 1, 3, 2 },
-          new float[]
-          {
-            0.5f, 0f, 0f,
-            0.5f, 0f, 1f,
-            1f, 0f, 0f,
-            1f, 0f, 1f,
-          })
-    },
-    {
-      11, (new int[] { 0, 2, 1, 0, 5, 3, 2, 3, 4, 3, 5, 4 },
-          new float[]
-          {
-            0f, 0f, 0f,
-            1f, 0f, 0f,
-            1f, 0f, 1f,
-            0.5f, 0f, 0.5f,
-            0.5f, 0f, 1f,
-            0f, 0f, 0.5f,
-          })
-    },
-    {
-      12, (new int[] { 0, 1, 2, 1, 3, 2 },
-          new float[]
-          {
-            0f, 0f, 0.5f,
-            0f, 0f, 1f,
-            1f, 0f, 0.5f,
-            1f, 0f, 1f,
-          })
-    },
-    {
-      13, (new int[] { 0, 1, 2, 0, 3, 4, 2, 5, 3, 3, 5, 4 },
-          new float[]
-          {
-            0f, 0f, 0f,
-            0f, 0f, 1f,
-            1f, 0f, 1f,
-            0.5f, 0f, 0.5f,
-            0.5f, 0f, 0f,
-            1f, 0f, 0.5f,
-          })
-    },
-    {
-       14, (new int[] { 0, 2, 1, 0, 4, 3, 2, 3, 5, 3, 4, 5 },
-          new float[]
-          {
-            1f, 0f, 0f,
-            1f, 0f, 1f,
-            0f, 0f, 1f,
-            0.5f, 0f, 0.5f,
-            0.5f, 0f, 0f,
-            0f, 0f, 0.5f,
-          })
-    },
-    {
-      15, (new int[] { 0, 1, 2, 1, 3, 2 },
-          new float[]
-          {
-            0f, 0f, 0f,
-            0f, 0f, 1f,
-            1f, 0f, 0f,
-            1f, 0f, 1f,
-          })
-    },
-};
+  {
+      { 0, (new int[0], new float[0]) },
+      {
+        1, (new int[] { 0, 2, 1 },
+            new float[]
+            {
+              0f, 0f, 0f,
+              0.5f, 0f, 0f,
+              0f, 0f, 0.5f,
+            })
+      },
+      {
+        2, (new int[] { 0, 1, 2 },
+            new float[]
+            {
+              1f, 0f, 0f,
+              0.5f, 0f, 0f,
+              1f, 0f, 0.5f,
+            })
+      },
+      {
+        3, (new int[] { 0, 1, 2, 2, 1, 3 },
+            new float[]
+            {
+              0f, 0f, 0f,
+              0f, 0f, 0.5f,
+              1f, 0f, 0f,
+              1f, 0f, 0.5f,
+            })
+      },
+      {
+        4, (new int[] { 0, 1, 2 },
+            new float[]
+            {
+              0f, 0f, 1f,
+              0.5f, 0f, 1f,
+              0f, 0f, 0.5f,
+            })
+      },
+      {
+        5, (new int[] { 0, 1, 2, 2, 1, 3 },
+            new float[]
+            {
+              0f, 0f, 0f,
+              0f, 0f, 1f,
+              0.5f, 0f, 0f,
+              0.5f, 0f, 1f,
+            })
+      },
+      {
+        6, (new int[] { 0, 1, 2, 3, 5, 4 },
+            new float[]
+            {
+              0f, 0f, 0.5f,
+              0f, 0f, 1f,
+              0.5f, 0f, 1f,
+              0.5f, 0f, 0f,
+              1f, 0f, 0f,
+              1f, 0f, 0.5f,
+            })
+      },
+      {
+        7, (new int[] { 0, 2, 1, 1, 3, 5, 2, 4, 3, 3, 4, 5 },
+            new float[]
+            {
+              0f, 0f, 0f,
+              1f, 0f, 0f,
+              0f, 0f, 1f,
+              0.5f, 0f, 0.5f,
+              0.5f, 0f, 1f,
+              1f, 0f, 0.5f,
+            })
+      },
+      {
+        8, (new int[] { 0, 1, 2 },
+            new float[]
+            {
+              0.5f, 0f, 1f,
+              1f, 0f, 1f,
+              1f, 0f, 0.5f,
+            })
+      },
+      {
+        9, (new int[] { 0, 1, 2, 3, 4, 5 },
+            new float[]
+            {
+              0f, 0f, 0f,
+              0f, 0f, 0.5f,
+              0.5f, 0f, 0f,
+              0.5f, 0f, 1f,
+              1f, 0f, 1f,
+              1f, 0f, 0.5f,
+            })
+      },
+      {
+        10, (new int[] { 0, 1, 2, 1, 3, 2 },
+            new float[]
+            {
+              0.5f, 0f, 0f,
+              0.5f, 0f, 1f,
+              1f, 0f, 0f,
+              1f, 0f, 1f,
+            })
+      },
+      {
+        11, (new int[] { 0, 2, 1, 0, 5, 3, 2, 3, 4, 3, 5, 4 },
+            new float[]
+            {
+              0f, 0f, 0f,
+              1f, 0f, 0f,
+              1f, 0f, 1f,
+              0.5f, 0f, 0.5f,
+              0.5f, 0f, 1f,
+              0f, 0f, 0.5f,
+            })
+      },
+      {
+        12, (new int[] { 0, 1, 2, 1, 3, 2 },
+            new float[]
+            {
+              0f, 0f, 0.5f,
+              0f, 0f, 1f,
+              1f, 0f, 0.5f,
+              1f, 0f, 1f,
+            })
+      },
+      {
+        13, (new int[] { 0, 1, 2, 0, 3, 4, 2, 5, 3, 3, 5, 4 },
+            new float[]
+            {
+              0f, 0f, 0f,
+              0f, 0f, 1f,
+              1f, 0f, 1f,
+              0.5f, 0f, 0.5f,
+              0.5f, 0f, 0f,
+              1f, 0f, 0.5f,
+            })
+      },
+      {
+        14, (new int[] { 0, 2, 1, 0, 4, 3, 2, 3, 5, 3, 4, 5 },
+            new float[]
+            {
+              1f, 0f, 0f,
+              1f, 0f, 1f,
+              0f, 0f, 1f,
+              0.5f, 0f, 0.5f,
+              0.5f, 0f, 0f,
+              0f, 0f, 0.5f,
+            })
+      },
+      {
+        15, (new int[] { 0, 1, 2, 1, 3, 2 },
+            new float[]
+            {
+              0f, 0f, 0f,
+              0f, 0f, 1f,
+              1f, 0f, 0f,
+              1f, 0f, 1f,
+            })
+      },
+  };
 
   public void SetGameRunning(bool isRunning)
   {
