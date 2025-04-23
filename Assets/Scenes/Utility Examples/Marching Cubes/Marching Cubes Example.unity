@@ -174,7 +174,7 @@ MonoBehaviour:
   Depth: 10
   Threshold: 0.5
   IsRenderingPoints: 1
-  IsRenderingMesh: 0
+  IsRenderingMesh: 1
 --- !u!1 &1503775510
 GameObject:
   m_ObjectHideFlags: 0

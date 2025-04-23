@@ -66,6 +66,7 @@ dotnet_naming_style.underscore_camel_case.required_prefix = _
 # Diagnostics and additional rules
 dotnet_diagnostic.CA1051.severity = none       # Avoid exposing internal fields
 dotnet_diagnostic.SA1503.severity = none     # Braces for single-line statements
+dotnet_diagnostic.SA1401.severity = none     # Fields must be private
 dotnet_diagnostic.CS0168.severity = warning     # Unused variable warnings
 dotnet_diagnostic.SA1600.severity = suggestion     # Require documentation comments
 dotnet_diagnostic.SA1309.severity = none        # Allow private fields to start with an underscore
