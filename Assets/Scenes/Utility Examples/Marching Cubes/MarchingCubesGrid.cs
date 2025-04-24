@@ -22,7 +22,6 @@ public class MarchingCubesGrid : MonoBehaviour
   private Mesh _mesh;
 
   // Public methods
-
   public void Awake()
   {
     _pointsPool = new GameObjectPool(Prefab, 50);
@@ -195,7 +194,7 @@ public class MarchingCubesGrid : MonoBehaviour
       float value2 = scalarValues[edgeVertices[1]];
 
       float t = (Threshold - value1) / (value2 - value1);
-      vertices.Add(Vector3.Lerp(vertex1, vertex2, t));
+      vertices.Add(Vector3.Lerp(vertex1, vertex2, 0.25f));
     }
 
     // Create triangles

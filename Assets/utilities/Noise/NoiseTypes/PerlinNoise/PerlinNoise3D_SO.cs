@@ -1,27 +1,56 @@
 using UnityEngine;
 
 /// <summary>
-/// Enum representing the mode for normalizing Perlin noise values.
-/// </summary>
-public enum NormalizeMode
-{
-  /// <summary>
-  /// Normalizes the noise values locally, within the context of the current map's min and max values.
-  /// </summary>
-  Local,
-
-  /// <summary>
-  /// Normalizes the noise values globally, considering a pre-determined maximum possible range.
-  /// </summary>
-  Global,
-}
-
-/// <summary>
 /// A ScriptableObject class for configuring Perlin noise generation parameters.
 /// </summary>
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Noise/PerlinNoise", order = 2)]
-public class PerlinNoise_SO : RandomNoise_SO
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Noise3D/PerlinNoise3D", order = 2)]
+public class PerlinNoise3D_SO
 {
+
+  /// <summary>
+  /// The width of the noise map.
+  /// </summary>
+  [SerializeField]
+  private int width;
+
+  /// <summary>
+  /// Gets the width of the noise map.
+  /// </summary>
+  public int Width => this.width;
+
+  /// <summary>
+  /// The height of the noise map.
+  /// </summary>
+  [SerializeField]
+  private int height;
+
+  /// <summary>
+  /// Gets the height of the noise map.
+  /// </summary>
+  public int Height => this.height;
+
+  /// <summary>
+  /// The depth of the noise map.
+  /// </summary>
+  [SerializeField]
+  private int depth;
+
+  /// <summary>
+  /// Gets the depth of the noise map.
+  /// </summary>
+  public int Depth => this.depth;
+
+  /// <summary>
+  /// The seed for the random number generator used in noise generation.
+  /// </summary>
+  [SerializeField]
+  private int seed;
+
+  /// <summary>
+  /// Gets the seed for the random number generator used in noise generation.
+  /// </summary>
+  public int Seed => this.seed;
+
   /// <summary>
   /// The scale factor for the Perlin noise map, influencing the frequency of the noise pattern.
   /// </summary>
@@ -78,20 +107,31 @@ public class PerlinNoise_SO : RandomNoise_SO
   public NormalizeMode NormalizeMode => this.normalizeMode;
 
   /// <summary>
+  /// The offset applied to the noise map.
+  /// </summary>
+  [SerializeField]
+  private Vector2 offset;
+
+  /// <summary>
+  /// Gets the offset applied to the noise map.
+  /// </summary>
+  public Vector2 Offset => this.offset;
+
+  /// <summary>
   /// Generates a Perlin noise map based on the configured parameters.
   /// </summary>
-  /// <returns>A 2D array of float values representing the Perlin noise map.</returns>
-  public override float[,] GenerateNoiseMap(int width, int height)
+  /// <returns>A 3D array of float values representing the Perlin noise map.</returns>
+  public float[,,] GenerateNoiseMap(int width, int height, int depth)
   {
-    return Noise.PerlinNoise.GeneratePerlinNoiseMap(width, height, this);
+    return Noise.PerlinNoise3D.GeneratePerlinNoiseMap(width, height, depth, this);
   }
 
   /// <summary>
   /// Generates a Perlin noise map based on the configured parameters.
   /// </summary>
-  /// <returns>A 2D array of float values representing the Perlin noise map.</returns>
-  public override float[,] GenerateNoiseMap()
+  /// <returns>A 3D array of float values representing the Perlin noise map.</returns>
+  public float[,,] GenerateNoiseMap()
   {
-    return Noise.PerlinNoise.GeneratePerlinNoiseMap(this);
+    return Noise.PerlinNoise3D.GeneratePerlinNoiseMap(this);
   }
 }
