@@ -5,7 +5,7 @@ public class MarchingCubesGrid : MonoBehaviour
 {
   // Public fields
   public GameObject Prefab;
-  public RandomNoise_SO NoiseScriptableObject;
+  public PerlinNoise3D_SO NoiseScriptableObject;
   public int Width;
   public int Height;
   public int Depth;
@@ -14,7 +14,7 @@ public class MarchingCubesGrid : MonoBehaviour
   public bool IsRenderingMesh;
 
   // Private fields
-  private float[,] _noiseMap;
+  private float[,,] _noiseMap;
   private bool _isGameRunning = false;
   private GameObjectPool _pointsPool;
   private MeshFilter _meshFilter;
@@ -30,6 +30,7 @@ public class MarchingCubesGrid : MonoBehaviour
   public void Start()
   {
     SetupRendering();
+    UpdateNoiseMap();
     GeneratePoints();
     UpdateMesh();
     SetGameRunning(true);
@@ -39,6 +40,7 @@ public class MarchingCubesGrid : MonoBehaviour
   {
     if (_isGameRunning)
     {
+      UpdateNoiseMap();
       GeneratePoints();
       UpdateMesh();
     }
@@ -71,6 +73,11 @@ public class MarchingCubesGrid : MonoBehaviour
     }
   }
 
+  private void UpdateNoiseMap()
+  {
+    _noiseMap = NoiseScriptableObject.GenerateNoiseMap(Width + 1, Height + 1, Depth + 1);
+  }
+
   private void UpdateMesh()
   {
     if (!IsRenderingMesh)
@@ -89,22 +96,20 @@ public class MarchingCubesGrid : MonoBehaviour
       return;
     }
 
-    _noiseMap = NoiseScriptableObject.GenerateNoiseMap(Width + 2, Height + 2);
-    for (int x = 0; x < Width; x++)
+    for (int x = 0; x < Width + 1; x++)
     {
-      for (int y = 0; y < Height; y++)
+      for (int y = 0; y < Height + 1; y++)
       {
-        for (int z = 0; z < Depth; z++)
+        for (int z = 0; z < Depth + 1; z++)
         {
-          float noiseValue = _noiseMap[x + 1, y + 1];
+          float noiseValue = _noiseMap[x, y, z];
 
           GameObject point = _pointsPool.GetItem();
           point.transform.parent = transform;
           point.transform.position = new Vector3(x, y, z);
 
           MeshRenderer meshRenderer = point.GetComponent<MeshRenderer>();
-          float tempThreshold = Threshold + z * 0.02f;
-          meshRenderer.material.color = noiseValue > tempThreshold ? Color.black : Color.white;
+          meshRenderer.material.color = noiseValue > Threshold ? Color.black : Color.white;
         }
       }
     }
@@ -112,8 +117,6 @@ public class MarchingCubesGrid : MonoBehaviour
 
   private Mesh GenerateMesh()
   {
-    _noiseMap = NoiseScriptableObject.GenerateNoiseMap(Width, Height);
-
     Mesh mesh = new Mesh
     {
       name = $"Marching_Squares_{Width}x{Height}",
@@ -122,12 +125,13 @@ public class MarchingCubesGrid : MonoBehaviour
     List<Vector3> vertices = new List<Vector3>();
     List<int> triangles = new List<int>();
 
-    for (int x = 0; x < Width - 1; x++)
+    for (int x = 0; x < Width; x++)
     {
-      for (int y = 0; y < Height - 1; y++)
+      for (int y = 0; y < Height; y++)
       {
-        for (int z = 0; z < Depth - 1; z++)
+        for (int z = 0; z < Depth; z++)
         {
+          Debug.Log($"Generating mesh section at ({x}, {y}, {z})");
           MarchingCubesSegment segment = GenerateMeshSection(x, y, z);
 
           for (int i = 0; i < segment.Triangles.Length; i++)
@@ -152,14 +156,14 @@ public class MarchingCubesGrid : MonoBehaviour
   {
     // Get scalar values for the cube's 8 vertices
     float[] scalarValues = new float[8];
-    scalarValues[0] = _noiseMap[x, y];         // Front bottom left
-    scalarValues[1] = _noiseMap[x + 1, y];     // Back bottom left
-    scalarValues[2] = _noiseMap[x, y + 1];     // Front bottom right
-    scalarValues[3] = _noiseMap[x + 1, y + 1]; // Back bottom right
-    scalarValues[4] = _noiseMap[x, y];         // Front top left
-    scalarValues[5] = _noiseMap[x + 1, y];     // Back top left
-    scalarValues[6] = _noiseMap[x, y + 1];     // Front top right
-    scalarValues[7] = _noiseMap[x + 1, y + 1]; // Back top right
+    scalarValues[0] = _noiseMap[x, y, z];             // Front bottom left
+    scalarValues[1] = _noiseMap[x + 1, y, z];         // Back bottom left
+    scalarValues[2] = _noiseMap[x, y + 1, z];         // Front bottom right
+    scalarValues[3] = _noiseMap[x + 1, y + 1, z];     // Back bottom right
+    scalarValues[4] = _noiseMap[x, y, z + 1];         // Front top left
+    scalarValues[5] = _noiseMap[x + 1, y, z + 1];     // Back top left
+    scalarValues[6] = _noiseMap[x, y + 1, z + 1];     // Front top right
+    scalarValues[7] = _noiseMap[x + 1, y + 1, z + 1]; // Back top right
 
     // Calculate the case index
     int caseIndex = 0;
@@ -171,6 +175,9 @@ public class MarchingCubesGrid : MonoBehaviour
       }
     }
 
+    Debug.Log($"Case index: {caseIndex}");
+    Debug.Log($"Case index: {caseIndex}");
+
     // Get the triangle configuration for this case
     int[] triangleEdges = MarchingCubesLookupTable.TriangleTable[caseIndex];
     if (triangleEdges[0] == -1)
@@ -178,6 +185,8 @@ public class MarchingCubesGrid : MonoBehaviour
       // No triangles for this case
       return new MarchingCubesSegment(new Vector3[0], new int[0]);
     }
+
+    Debug.Log($"Triangle edges: {string.Join(", ", triangleEdges)}");
 
     // Interpolate vertices along intersected edges
     List<Vector3> vertices = new List<Vector3>();
@@ -193,9 +202,12 @@ public class MarchingCubesGrid : MonoBehaviour
       float value1 = scalarValues[edgeVertices[0]];
       float value2 = scalarValues[edgeVertices[1]];
 
-      float t = (Threshold - value1) / (value2 - value1);
+      float t = Mathf.Clamp01((Threshold - value1) / (value2 - value1));
+      Debug.Log(t);
       vertices.Add(Vector3.Lerp(vertex1, vertex2, 0.25f));
     }
+
+    Debug.Log($"Vertices: {string.Join(", ", vertices)}");
 
     // Create triangles
     List<int> triangles = new List<int>();
@@ -206,6 +218,8 @@ public class MarchingCubesGrid : MonoBehaviour
       triangles.Add(i + 1);
       triangles.Add(i + 2);
     }
+
+    Debug.Log($"Triangles: {string.Join(", ", triangles)}");
 
     return new MarchingCubesSegment(vertices.ToArray(), triangles.ToArray());
   }

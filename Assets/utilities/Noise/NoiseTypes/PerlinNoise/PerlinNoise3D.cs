@@ -219,7 +219,7 @@ namespace Noise
       {
         for (int x = 0; x < width; x++)
         {
-          for (int z = 0; x < depth; z++)
+          for (int z = 0; z < depth; z++)
           {
 
             if (normalizeMode == NormalizeMode.Local)

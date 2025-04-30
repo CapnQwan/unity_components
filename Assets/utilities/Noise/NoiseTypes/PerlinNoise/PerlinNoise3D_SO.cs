@@ -4,7 +4,7 @@ using UnityEngine;
 /// A ScriptableObject class for configuring Perlin noise generation parameters.
 /// </summary>
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Noise3D/PerlinNoise3D", order = 2)]
-public class PerlinNoise3D_SO
+public class PerlinNoise3D_SO : ScriptableObject
 {
 
   /// <summary>

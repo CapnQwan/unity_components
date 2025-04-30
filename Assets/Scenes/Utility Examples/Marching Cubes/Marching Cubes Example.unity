@@ -164,16 +164,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 304543066}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cfaa24a2b7391645afe4ae18bc7e3df, type: 3}
+  m_Script: {fileID: 11500000, guid: 1aa0634d33eba6b41b5993924ac24f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Prefab: {fileID: 5601100186453632130, guid: 96a23d3985d838a43abd2c5e0cbb1bf8, type: 3}
-  NoiseScriptableObject: {fileID: 11400000, guid: 2523f9fda7857fb4396c43f05f3f005e, type: 2}
+  NoiseScriptableObject: {fileID: 11400000, guid: 5c3e30d608648ee4996316b9cc0067b0, type: 2}
   Width: 10
   Height: 10
   Depth: 10
   Threshold: 0.5
-  IsRenderingPoints: 1
+  IsRenderingPoints: 0
   IsRenderingMesh: 1
 --- !u!1 &1503775510
 GameObject:
