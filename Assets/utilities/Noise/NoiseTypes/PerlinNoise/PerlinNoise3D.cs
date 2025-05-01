@@ -192,8 +192,18 @@ namespace Noise
             {
               float sampleX = (x - halfWidth + octaveOffsets[i].x) / scale * frequency;
               float sampleY = (y - halfHeight + octaveOffsets[i].y) / scale * frequency;
+              float sampleZ = (z - depth * 0.5f + octaveOffsets[i].x) / scale * frequency;
 
-              float perlinValue = (Mathf.PerlinNoise(sampleX, sampleY) * 2) - 1;
+              // Combine multiple 2D noise layers to simulate 3D noise
+              float perlinValueXY = Mathf.PerlinNoise(sampleX, sampleY);
+              float perlinValueXZ = Mathf.PerlinNoise(sampleX, sampleZ);
+              float perlinValueYZ = Mathf.PerlinNoise(sampleY, sampleZ);
+
+              // Average the noise values to approximate 3D noise
+              float perlinValue = (perlinValueXY + perlinValueXZ + perlinValueYZ) / 3f;
+
+              // Scale and offset the noise value
+              perlinValue = (perlinValue * 2) - 1;
               noiseHeight += perlinValue * amplitude;
 
               amplitude *= persistance;

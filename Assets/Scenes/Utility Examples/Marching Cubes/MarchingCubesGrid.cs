@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class MarchingCubesGrid : MonoBehaviour
 {
@@ -124,30 +125,68 @@ public class MarchingCubesGrid : MonoBehaviour
 
     List<Vector3> vertices = new List<Vector3>();
     List<int> triangles = new List<int>();
+    List<Vector2> uvs = new List<Vector2>();
 
+    // Use a thread-safe collection for vertices and triangles
+    object lockObject = new object();
+
+    // Create tasks for each slice of the grid
+    List<Task> tasks = new List<Task>();
     for (int x = 0; x < Width; x++)
     {
-      for (int y = 0; y < Height; y++)
+      int xCopy = x; // Avoid closure issues
+      tasks.Add(Task.Run(() =>
       {
-        for (int z = 0; z < Depth; z++)
+        List<Vector3> localVertices = new List<Vector3>();
+        List<int> localTriangles = new List<int>();
+        List<Vector2> localUVs = new List<Vector2>();
+
+        for (int y = 0; y < Height; y++)
         {
-          Debug.Log($"Generating mesh section at ({x}, {y}, {z})");
-          MarchingCubesSegment segment = GenerateMeshSection(x, y, z);
-
-          for (int i = 0; i < segment.Triangles.Length; i++)
+          for (int z = 0; z < Depth; z++)
           {
-            segment.Triangles[i] += vertices.Count;
-          }
+            MarchingCubesSegment segment = GenerateMeshSection(xCopy, y, z);
 
-          vertices.AddRange(segment.Vertices);
-          triangles.AddRange(segment.Triangles);
+            for (int i = 0; i < segment.Triangles.Length; i++)
+            {
+              segment.Triangles[i] += localVertices.Count;
+            }
+
+            foreach (Vector3 vertex in segment.Vertices)
+            {
+              localUVs.Add(new Vector2(vertex.x / Width, vertex.z / Depth)); // Example UV mapping
+            }
+
+            localVertices.AddRange(segment.Vertices);
+            localTriangles.AddRange(segment.Triangles);
+          }
         }
-      }
+
+        // Lock and add local results to the main lists
+        lock (lockObject)
+        {
+          int vertexOffset = vertices.Count;
+          vertices.AddRange(localVertices);
+          uvs.AddRange(localUVs);
+
+          foreach (int triangle in localTriangles)
+          {
+            triangles.Add(triangle + vertexOffset);
+          }
+        }
+      }));
     }
 
-    // Assign the generated data to the mesh.
+    // Wait for all tasks to complete
+    Task.WaitAll(tasks.ToArray());
+
+    // Assign the generated data to the mesh
     mesh.vertices = vertices.ToArray();
     mesh.triangles = triangles.ToArray();
+    mesh.uv = uvs.ToArray();
+
+    // Automatically calculate normals
+    mesh.RecalculateNormals();
 
     return mesh;
   }
@@ -157,12 +196,12 @@ public class MarchingCubesGrid : MonoBehaviour
     // Get scalar values for the cube's 8 vertices
     float[] scalarValues = new float[8];
     scalarValues[0] = _noiseMap[x, y, z];             // Front bottom left
-    scalarValues[1] = _noiseMap[x + 1, y, z];         // Back bottom left
-    scalarValues[2] = _noiseMap[x, y + 1, z];         // Front bottom right
-    scalarValues[3] = _noiseMap[x + 1, y + 1, z];     // Back bottom right
-    scalarValues[4] = _noiseMap[x, y, z + 1];         // Front top left
-    scalarValues[5] = _noiseMap[x + 1, y, z + 1];     // Back top left
-    scalarValues[6] = _noiseMap[x, y + 1, z + 1];     // Front top right
+    scalarValues[1] = _noiseMap[x + 1, y, z];         // Front bottom right
+    scalarValues[2] = _noiseMap[x, y + 1, z];         // Front left left
+    scalarValues[3] = _noiseMap[x + 1, y + 1, z];     // Front left right
+    scalarValues[4] = _noiseMap[x, y, z + 1];         // Back bottom left
+    scalarValues[5] = _noiseMap[x + 1, y, z + 1];     // Back bottom right
+    scalarValues[6] = _noiseMap[x, y + 1, z + 1];     // Back top left
     scalarValues[7] = _noiseMap[x + 1, y + 1, z + 1]; // Back top right
 
     // Calculate the case index
@@ -175,9 +214,6 @@ public class MarchingCubesGrid : MonoBehaviour
       }
     }
 
-    Debug.Log($"Case index: {caseIndex}");
-    Debug.Log($"Case index: {caseIndex}");
-
     // Get the triangle configuration for this case
     int[] triangleEdges = MarchingCubesLookupTable.TriangleTable[caseIndex];
     if (triangleEdges[0] == -1)
@@ -185,8 +221,6 @@ public class MarchingCubesGrid : MonoBehaviour
       // No triangles for this case
       return new MarchingCubesSegment(new Vector3[0], new int[0]);
     }
-
-    Debug.Log($"Triangle edges: {string.Join(", ", triangleEdges)}");
 
     // Interpolate vertices along intersected edges
     List<Vector3> vertices = new List<Vector3>();
@@ -203,11 +237,8 @@ public class MarchingCubesGrid : MonoBehaviour
       float value2 = scalarValues[edgeVertices[1]];
 
       float t = Mathf.Clamp01((Threshold - value1) / (value2 - value1));
-      Debug.Log(t);
-      vertices.Add(Vector3.Lerp(vertex1, vertex2, 0.25f));
+      vertices.Add(Vector3.Lerp(vertex1, vertex2, t));
     }
-
-    Debug.Log($"Vertices: {string.Join(", ", vertices)}");
 
     // Create triangles
     List<int> triangles = new List<int>();
@@ -219,22 +250,20 @@ public class MarchingCubesGrid : MonoBehaviour
       triangles.Add(i + 2);
     }
 
-    Debug.Log($"Triangles: {string.Join(", ", triangles)}");
-
     return new MarchingCubesSegment(vertices.ToArray(), triangles.ToArray());
   }
+}
 
-  public struct MarchingCubesSegment
+public struct MarchingCubesSegment
+{
+  public Vector3[] Vertices;
+  public int[] Triangles;
+
+  public MarchingCubesSegment(
+    Vector3[] vertices,
+    int[] triangles)
   {
-    public Vector3[] Vertices;
-    public int[] Triangles;
-
-    public MarchingCubesSegment(
-      Vector3[] vertices,
-      int[] triangles)
-    {
-      Vertices = vertices;
-      Triangles = triangles;
-    }
+    Vertices = vertices;
+    Triangles = triangles;
   }
 }
