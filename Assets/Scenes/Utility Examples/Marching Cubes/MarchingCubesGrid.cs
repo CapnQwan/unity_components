@@ -253,17 +253,3 @@ public class MarchingCubesGrid : MonoBehaviour
     return new MarchingCubesSegment(vertices.ToArray(), triangles.ToArray());
   }
 }
-
-public struct MarchingCubesSegment
-{
-  public Vector3[] Vertices;
-  public int[] Triangles;
-
-  public MarchingCubesSegment(
-    Vector3[] vertices,
-    int[] triangles)
-  {
-    Vertices = vertices;
-    Triangles = triangles;
-  }
-}
