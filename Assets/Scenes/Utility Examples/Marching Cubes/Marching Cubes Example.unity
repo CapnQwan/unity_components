@@ -123,6 +123,58 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &156718161
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 156718163}
+  - component: {fileID: 156718162}
+  m_Layer: 0
+  m_Name: Marching Cubes Terrain
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &156718162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156718161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7827c8d4e01916489a443aa9a18e3ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chunkCountX: 10
+  chunkCountY: 10
+  chunkCountZ: 6
+  chunkWidth: 16
+  chunkDepth: 16
+  chunkHeight: 16
+  threshold: 0.5
+  noiseScriptableObject: {fileID: 11400000, guid: 5c3e30d608648ee4996316b9cc0067b0, type: 2}
+--- !u!4 &156718163
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156718161}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &304543066
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,7 +191,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &304543067
 Transform:
   m_ObjectHideFlags: 0
@@ -169,9 +221,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Prefab: {fileID: 5601100186453632130, guid: 96a23d3985d838a43abd2c5e0cbb1bf8, type: 3}
   NoiseScriptableObject: {fileID: 11400000, guid: 5c3e30d608648ee4996316b9cc0067b0, type: 2}
-  Width: 40
-  Height: 40
-  Depth: 40
+  Width: 30
+  Height: 30
+  Depth: 30
   Threshold: 0.5
   IsRenderingPoints: 0
   IsRenderingMesh: 1
@@ -368,3 +420,4 @@ SceneRoots:
   - {fileID: 1503775513}
   - {fileID: 2049337839}
   - {fileID: 304543067}
+  - {fileID: 156718163}

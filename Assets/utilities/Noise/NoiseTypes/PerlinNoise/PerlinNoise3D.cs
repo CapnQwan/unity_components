@@ -36,7 +36,7 @@ namespace Noise
     public const NormalizeMode DEFAULT_NORMALIZE_MODE = NormalizeMode.Local;
 
     /// <summary>Default offset applied to the noise map coordinates.</summary>
-    public static readonly Vector2 DEFAULT_OFFSET = new Vector2(0f, 0f);
+    public static readonly Vector3 DEFAULT_OFFSET = new Vector3(0f, 0f, 0f);
 
     /// <summary>Range for generating random offsets in the noise map.</summary>
     private const int OFFSET_RANGE = 100000;
@@ -59,6 +59,25 @@ namespace Noise
         noiseScriptableObject.Persistance,
         noiseScriptableObject.NormalizeMode,
         noiseScriptableObject.Offset);
+    }
+    /// <summary>
+    /// Generates a Perlin noise map using a <see cref="PerlinNoise3D_SO"/> scriptable object.
+    /// </summary>
+    /// <param name="noiseScriptableObject">The scriptable object containing noise parameters.</param>
+    /// <returns>A 2D array of float values representing the generated noise map.</returns>
+    public static float[,,] GeneratePerlinNoiseMap(int width, int height, int depth, Vector3 offset, PerlinNoise3D_SO noiseScriptableObject)
+    {
+      return GeneratePerlinNoiseMap(
+        width,
+        height,
+        depth,
+        noiseScriptableObject.Seed,
+        noiseScriptableObject.Octaves,
+        noiseScriptableObject.Scale,
+        noiseScriptableObject.Lacunarity,
+        noiseScriptableObject.Persistance,
+        noiseScriptableObject.NormalizeMode,
+        offset);
     }
 
     /// <summary>
@@ -126,7 +145,7 @@ namespace Noise
       float lacunarity = DEFAULT_LACUNARITY,
       float persistance = DEFAULT_PERSISTANCE,
       NormalizeMode normalizeMode = DEFAULT_NORMALIZE_MODE,
-      Vector2 offset = default)
+      Vector3 offset = default)
     {
       if (width <= 0 || height <= 0)
       {
@@ -146,7 +165,7 @@ namespace Noise
       float[,,] noiseMap = new float[width, height, depth];
 
       System.Random prng = new System.Random(seed);
-      Vector2[] octaveOffsets = new Vector2[octaves];
+      Vector3[] octaveOffsets = new Vector3[octaves];
 
       float maxPossibleHeight = 0;
       float amplitude = 1;
@@ -155,7 +174,8 @@ namespace Noise
       {
         float offsetX = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) + offset.x;
         float offsetY = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) - offset.y;
-        octaveOffsets[i] = new Vector2(offsetX, offsetY);
+        float offsetZ = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) + offset.z;
+        octaveOffsets[i] = new Vector3(offsetX, offsetY, offsetZ);
 
         maxPossibleHeight += amplitude;
         amplitude *= persistance;
@@ -171,6 +191,7 @@ namespace Noise
 
       float halfWidth = width * 0.5f;
       float halfHeight = height * 0.5f;
+      float halfDepth = depth * 0.5f;
 
       // Thread-safe variables for min/max values
       object lockObject = new object();
@@ -192,7 +213,7 @@ namespace Noise
             {
               float sampleX = (x - halfWidth + octaveOffsets[i].x) / scale * frequency;
               float sampleY = (y - halfHeight + octaveOffsets[i].y) / scale * frequency;
-              float sampleZ = (z - depth * 0.5f + octaveOffsets[i].x) / scale * frequency;
+              float sampleZ = (z - halfDepth + octaveOffsets[i].z) / scale * frequency;
 
               // Combine multiple 2D noise layers to simulate 3D noise
               float perlinValueXY = Mathf.PerlinNoise(sampleX, sampleY);

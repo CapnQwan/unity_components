@@ -130,6 +130,15 @@ public class PerlinNoise3D_SO : ScriptableObject
   /// Generates a Perlin noise map based on the configured parameters.
   /// </summary>
   /// <returns>A 3D array of float values representing the Perlin noise map.</returns>
+  public float[,,] GenerateNoiseMap(int width, int height, int depth, Vector3 offset)
+  {
+    return Noise.PerlinNoise3D.GeneratePerlinNoiseMap(width, height, depth, offset, this);
+  }
+
+  /// <summary>
+  /// Generates a Perlin noise map based on the configured parameters.
+  /// </summary>
+  /// <returns>A 3D array of float values representing the Perlin noise map.</returns>
   public float[,,] GenerateNoiseMap()
   {
     return Noise.PerlinNoise3D.GeneratePerlinNoiseMap(this);

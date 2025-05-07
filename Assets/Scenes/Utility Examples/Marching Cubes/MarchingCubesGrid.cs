@@ -47,12 +47,12 @@ public class MarchingCubesGrid : MonoBehaviour
     }
   }
 
-  public void SetGameRunning(bool isRunning)
+  // Private methods
+  private void SetGameRunning(bool isRunning)
   {
     _isGameRunning = isRunning;
   }
 
-  // Private methods
   private void SetupRendering()
   {
     if (_meshFilter == null)
@@ -60,6 +60,7 @@ public class MarchingCubesGrid : MonoBehaviour
       MeshFilter meshFilter = GetComponent<MeshFilter>();
       _meshFilter = meshFilter == null ? gameObject.AddComponent<MeshFilter>() : meshFilter;
     }
+
 
     if (_meshRenderer == null)
     {
@@ -118,138 +119,6 @@ public class MarchingCubesGrid : MonoBehaviour
 
   private Mesh GenerateMesh()
   {
-    Mesh mesh = new Mesh
-    {
-      name = $"Marching_Squares_{Width}x{Height}",
-    };
-
-    List<Vector3> vertices = new List<Vector3>();
-    List<int> triangles = new List<int>();
-    List<Vector2> uvs = new List<Vector2>();
-
-    // Use a thread-safe collection for vertices and triangles
-    object lockObject = new object();
-
-    // Create tasks for each slice of the grid
-    List<Task> tasks = new List<Task>();
-    for (int x = 0; x < Width; x++)
-    {
-      int xCopy = x; // Avoid closure issues
-      tasks.Add(Task.Run(() =>
-      {
-        List<Vector3> localVertices = new List<Vector3>();
-        List<int> localTriangles = new List<int>();
-        List<Vector2> localUVs = new List<Vector2>();
-
-        for (int y = 0; y < Height; y++)
-        {
-          for (int z = 0; z < Depth; z++)
-          {
-            MarchingCubesSegment segment = GenerateMeshSection(xCopy, y, z);
-
-            for (int i = 0; i < segment.Triangles.Length; i++)
-            {
-              segment.Triangles[i] += localVertices.Count;
-            }
-
-            foreach (Vector3 vertex in segment.Vertices)
-            {
-              localUVs.Add(new Vector2(vertex.x / Width, vertex.z / Depth)); // Example UV mapping
-            }
-
-            localVertices.AddRange(segment.Vertices);
-            localTriangles.AddRange(segment.Triangles);
-          }
-        }
-
-        // Lock and add local results to the main lists
-        lock (lockObject)
-        {
-          int vertexOffset = vertices.Count;
-          vertices.AddRange(localVertices);
-          uvs.AddRange(localUVs);
-
-          foreach (int triangle in localTriangles)
-          {
-            triangles.Add(triangle + vertexOffset);
-          }
-        }
-      }));
-    }
-
-    // Wait for all tasks to complete
-    Task.WaitAll(tasks.ToArray());
-
-    // Assign the generated data to the mesh
-    mesh.vertices = vertices.ToArray();
-    mesh.triangles = triangles.ToArray();
-    mesh.uv = uvs.ToArray();
-
-    // Automatically calculate normals
-    mesh.RecalculateNormals();
-
-    return mesh;
-  }
-
-  private MarchingCubesSegment GenerateMeshSection(int x, int y, int z)
-  {
-    // Get scalar values for the cube's 8 vertices
-    float[] scalarValues = new float[8];
-    scalarValues[0] = _noiseMap[x, y, z];             // Front bottom left
-    scalarValues[1] = _noiseMap[x + 1, y, z];         // Front bottom right
-    scalarValues[2] = _noiseMap[x, y + 1, z];         // Front left left
-    scalarValues[3] = _noiseMap[x + 1, y + 1, z];     // Front left right
-    scalarValues[4] = _noiseMap[x, y, z + 1];         // Back bottom left
-    scalarValues[5] = _noiseMap[x + 1, y, z + 1];     // Back bottom right
-    scalarValues[6] = _noiseMap[x, y + 1, z + 1];     // Back top left
-    scalarValues[7] = _noiseMap[x + 1, y + 1, z + 1]; // Back top right
-
-    // Calculate the case index
-    int caseIndex = 0;
-    for (int i = 0; i < 8; i++)
-    {
-      if (scalarValues[i] > Threshold)
-      {
-        caseIndex |= 1 << i;
-      }
-    }
-
-    // Get the triangle configuration for this case
-    int[] triangleEdges = MarchingCubesLookupTable.TriangleTable[caseIndex];
-    if (triangleEdges[0] == -1)
-    {
-      // No triangles for this case
-      return new MarchingCubesSegment(new Vector3[0], new int[0]);
-    }
-
-    // Interpolate vertices along intersected edges
-    List<Vector3> vertices = new List<Vector3>();
-    for (int i = 0; i < triangleEdges.Length; i++)
-    {
-      if (triangleEdges[i] == -1) break;
-
-      int edgeIndex = triangleEdges[i];
-      int[] edgeVertices = MarchingCubesLookupTable.EdgeVertexIndices[edgeIndex];
-
-      Vector3 vertex1 = new Vector3(x, y, z) + MarchingCubesLookupTable.VertexOffsets[edgeVertices[0]];
-      Vector3 vertex2 = new Vector3(x, y, z) + MarchingCubesLookupTable.VertexOffsets[edgeVertices[1]];
-      float value1 = scalarValues[edgeVertices[0]];
-      float value2 = scalarValues[edgeVertices[1]];
-
-      float t = Mathf.Clamp01((Threshold - value1) / (value2 - value1));
-      vertices.Add(Vector3.Lerp(vertex1, vertex2, t));
-    }
-
-    // Create triangles
-    List<int> triangles = new List<int>();
-    for (int i = 0; i < triangleEdges.Length; i += 3)
-    {
-      if (triangleEdges[i] == -1) break;
-      triangles.Add(i);
-      triangles.Add(i + 1);
-      triangles.Add(i + 2);
-    }
-
-    return new MarchingCubesSegment(vertices.ToArray(), triangles.ToArray());
+    return MarchingCubes.GenerateMesh(Width, Height, Depth, _noiseMap, Threshold);
   }
 }
