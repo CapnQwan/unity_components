@@ -21,4 +21,4 @@ MonoBehaviour:
   lacunarity: 1.91
   persistance: 0.7
   octaves: 8
-  normalizeMode: 0
+  normalizeMode: 1

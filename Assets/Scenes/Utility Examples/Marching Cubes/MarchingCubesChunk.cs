@@ -50,7 +50,10 @@ public class MarchingCubesChunk : MonoBehaviour
     chunk.transform.parent = transform;
     chunk.transform.localPosition = new Vector3(x * chunkWidth, y * chunkHeight, z * chunkDepth);
 
-    Vector3 offset = new Vector3(x * chunkWidth, y * chunkHeight, z * chunkDepth);
+    Vector3 offset = new Vector3(
+      x * chunkWidth,
+      y * chunkHeight,
+      z * chunkDepth);
     float[,,] noiseMap = noiseScriptableObject.GenerateNoiseMap(
       chunkWidth + 1,
       chunkHeight + 1,

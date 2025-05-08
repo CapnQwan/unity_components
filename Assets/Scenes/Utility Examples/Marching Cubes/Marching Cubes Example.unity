@@ -158,7 +158,7 @@ MonoBehaviour:
   chunkWidth: 16
   chunkDepth: 16
   chunkHeight: 16
-  threshold: 0.5
+  threshold: 0.3
   noiseScriptableObject: {fileID: 11400000, guid: 5c3e30d608648ee4996316b9cc0067b0, type: 2}
 --- !u!4 &156718163
 Transform:

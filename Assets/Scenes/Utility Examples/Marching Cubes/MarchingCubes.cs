@@ -95,7 +95,6 @@ public static class MarchingCubes
   {
     // Get scalar values for the cube's 8 vertices
     float[] scalarValues = getScalarValues(scalarMap, x, y, z);
-
     // Calculate the case index
     int caseIndex = GetCaseIndex(scalarValues, threshold);
 
@@ -128,8 +127,7 @@ public static class MarchingCubes
   /// <returns>
   /// The scalar values for the vertices of a cube in the scalar map.
   /// </returns>
-  /// TODO: convert to private
-  public static float[] getScalarValues(
+  private static float[] getScalarValues(
     float[,,] scalarMap,
     int x,
     int y,
@@ -158,8 +156,7 @@ public static class MarchingCubes
   /// <returns>
   /// The case index for the cube based on the scalar values and threshold.
   /// </returns>
-  /// TODO: convert to private
-  public static int GetCaseIndex(float[] scalarValues, float threshold)
+  private static int GetCaseIndex(float[] scalarValues, float threshold)
   {
     int caseIndex = 0;
 
@@ -174,8 +171,7 @@ public static class MarchingCubes
     return caseIndex;
   }
 
-  // TODO: convert to private
-  public static List<Vector3> GetVerticies(
+  private static List<Vector3> GetVerticies(
     int[] triangleEdges,
     float[] scalarValues,
     int x,
@@ -202,7 +198,7 @@ public static class MarchingCubes
     return vertices;
   }
 
-  public static List<int> CreateTriangleIndices(int[] triangleEdges, int offset)
+  private static List<int> CreateTriangleIndices(int[] triangleEdges, int offset)
   {
     List<int> triangles = new List<int>();
 
@@ -217,7 +213,7 @@ public static class MarchingCubes
     return triangles;
   }
 
-  public static void CreateUVs(
+  private static void CreateUVs(
     List<Vector2> localUVs,
     List<Vector3> vertices,
     int width,

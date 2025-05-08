@@ -173,7 +173,7 @@ namespace Noise
       for (int i = 0; i < octaves; i++)
       {
         float offsetX = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) + offset.x;
-        float offsetY = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) - offset.y;
+        float offsetY = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) + offset.y;
         float offsetZ = prng.Next(-OFFSET_RANGE, OFFSET_RANGE) + offset.z;
         octaveOffsets[i] = new Vector3(offsetX, offsetY, offsetZ);
 
