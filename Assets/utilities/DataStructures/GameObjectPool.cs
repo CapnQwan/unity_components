@@ -26,16 +26,7 @@ public class GameObjectPool
 
   public GameObject GetItem()
   {
-    GameObject item;
-    if (available.Count > 0)
-    {
-      item = available.Dequeue();
-    }
-    else
-    {
-      item = Object.Instantiate(prefab, parent);
-    }
-
+    GameObject item = available.Count > 0 ? available.Dequeue() : Object.Instantiate(prefab, parent);
     inUse.Add(item);
     item.SetActive(true);
     return item;
@@ -55,6 +46,7 @@ public class GameObjectPool
       item.SetActive(false);
       available.Enqueue(item);
     }
+
     inUse.Clear();
   }
 }

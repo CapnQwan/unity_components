@@ -153,13 +153,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkCountX: 10
-  chunkCountY: 10
-  chunkCountZ: 6
+  chunkCountY: 1
+  chunkCountZ: 10
   chunkWidth: 16
   chunkDepth: 16
   chunkHeight: 16
   threshold: 0.3
-  noiseScriptableObject: {fileID: 11400000, guid: 5c3e30d608648ee4996316b9cc0067b0, type: 2}
+  noiseScriptableObject: {fileID: 11400000, guid: 361594000aa4ed2468655ad2fc752d18, type: 2}
 --- !u!4 &156718163
 Transform:
   m_ObjectHideFlags: 0
@@ -219,13 +219,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aa0634d33eba6b41b5993924ac24f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 5601100186453632130, guid: 96a23d3985d838a43abd2c5e0cbb1bf8, type: 3}
+  PointPrefab: {fileID: 5601100186453632130, guid: 96a23d3985d838a43abd2c5e0cbb1bf8, type: 3}
+  TextPrefab: {fileID: 7997369890489119857, guid: 549f2cf9d95e6fe4296e60ba96af592c, type: 3}
   NoiseScriptableObject: {fileID: 11400000, guid: 5c3e30d608648ee4996316b9cc0067b0, type: 2}
-  Width: 30
-  Height: 30
-  Depth: 30
-  Threshold: 0.5
+  Width: 4
+  Height: 3
+  Depth: 4
+  Threshold: 0.33
   IsRenderingPoints: 0
+  IsRenderingText: 1
   IsRenderingMesh: 1
 --- !u!1 &1503775510
 GameObject:

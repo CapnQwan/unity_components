@@ -1,5 +1,5 @@
 using System;
-using Noise;
+using System.Numerics;
 using UnityEngine;
 
 /// <summary>
@@ -35,7 +35,7 @@ public class RandomNoise_SO : ScriptableObject
   /// The offset applied to the noise map.
   /// </summary>
   [SerializeField]
-  private Vector2 offset;
+  private UnityEngine.Vector2 offset;
 
   /// <summary>
   /// Gets the width of the noise map.
@@ -55,7 +55,7 @@ public class RandomNoise_SO : ScriptableObject
   /// <summary>
   /// Gets the offset applied to the noise map.
   /// </summary>
-  public Vector2 Offset => this.offset;
+  public UnityEngine.Vector2 Offset => this.offset;
 
   public bool Invert => this.invert;
 
@@ -64,6 +64,15 @@ public class RandomNoise_SO : ScriptableObject
   /// </summary>
   /// <returns>A 2D array of floats representing the generated noise map.</returns>
   public virtual float[,] GenerateNoiseMap(int width, int height)
+  {
+    return Noise.RandomNoise.GenerateRandomNoiseMap(width, height, this);
+  }
+
+  /// <summary>
+  /// Generates a noise map using the parameters defined in this scriptable object.
+  /// </summary>
+  /// <returns>A 2D array of floats representing the generated noise map.</returns>
+  public virtual float[,] GenerateNoiseMap(int width, int height, UnityEngine.Vector2 offset)
   {
     return Noise.RandomNoise.GenerateRandomNoiseMap(width, height, this);
   }

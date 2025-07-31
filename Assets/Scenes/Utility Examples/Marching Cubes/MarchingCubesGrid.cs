@@ -1,23 +1,25 @@
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using System.Threading.Tasks;
 
 public class MarchingCubesGrid : MonoBehaviour
 {
   // Public fields
-  public GameObject Prefab;
+  public GameObject PointPrefab;
+  public GameObject TextPrefab;
   public PerlinNoise3D_SO NoiseScriptableObject;
   public int Width;
   public int Height;
   public int Depth;
   public float Threshold;
   public bool IsRenderingPoints;
+  public bool IsRenderingText;
   public bool IsRenderingMesh;
 
   // Private fields
   private float[,,] _noiseMap;
   private bool _isGameRunning = false;
   private GameObjectPool _pointsPool;
+  private GameObjectPool _textPool;
   private MeshFilter _meshFilter;
   private MeshRenderer _meshRenderer;
   private Mesh _mesh;
@@ -25,7 +27,8 @@ public class MarchingCubesGrid : MonoBehaviour
   // Public methods
   public void Awake()
   {
-    _pointsPool = new GameObjectPool(Prefab, 50);
+    _pointsPool = new GameObjectPool(PointPrefab, 50);
+    _textPool = new GameObjectPool(TextPrefab, 50);
   }
 
   public void Start()
@@ -33,6 +36,7 @@ public class MarchingCubesGrid : MonoBehaviour
     SetupRendering();
     UpdateNoiseMap();
     GeneratePoints();
+    GenerateCaseIndexIndicator();
     UpdateMesh();
     SetGameRunning(true);
   }
@@ -43,6 +47,7 @@ public class MarchingCubesGrid : MonoBehaviour
     {
       UpdateNoiseMap();
       GeneratePoints();
+      GenerateCaseIndexIndicator();
       UpdateMesh();
     }
   }
@@ -60,7 +65,6 @@ public class MarchingCubesGrid : MonoBehaviour
       MeshFilter meshFilter = GetComponent<MeshFilter>();
       _meshFilter = meshFilter == null ? gameObject.AddComponent<MeshFilter>() : meshFilter;
     }
-
 
     if (_meshRenderer == null)
     {
@@ -95,6 +99,7 @@ public class MarchingCubesGrid : MonoBehaviour
   {
     if (!IsRenderingPoints)
     {
+      _pointsPool.FinishedUsingAllItems();
       return;
     }
 
@@ -117,8 +122,36 @@ public class MarchingCubesGrid : MonoBehaviour
     }
   }
 
+  private void GenerateCaseIndexIndicator()
+  {
+    if (!IsRenderingText)
+    {
+      _textPool.FinishedUsingAllItems();
+      return;
+    }
+
+    for (int x = 0; x < Width; x++)
+    {
+      for (int y = 0; y < Height; y++)
+      {
+        for (int z = 0; z < Depth; z++)
+        {
+          float[] scalarValues = MarchingCubes.GetScalarValues(_noiseMap, x, y, z);
+          int caseIndex = MarchingCubes.GetCaseIndex(scalarValues, Threshold);
+
+          GameObject textObject = _textPool.GetItem();
+          textObject.transform.parent = transform;
+          textObject.transform.position = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+
+          TextMeshPro textMeshPro = textObject.GetComponent<TextMeshPro>();
+          textMeshPro.text = caseIndex.ToString();
+        }
+      }
+    }
+  }
+
   private Mesh GenerateMesh()
   {
-    return MarchingCubes.GenerateMesh(Width, Height, Depth, _noiseMap, Threshold);
+    return MarchingCubes.GenerateMesh(_noiseMap, Threshold);
   }
 }

@@ -2,14 +2,22 @@ using UnityEngine;
 
 public class MarchingCubesChunk : MonoBehaviour
 {
-  public int chunkCountX = 4;
-  public int chunkCountY = 2;
-  public int chunkCountZ = 4;
-  public int chunkWidth = 16;
-  public int chunkDepth = 16;
-  public int chunkHeight = 32;
-  public float threshold = 0.5f;
-  public PerlinNoise3D_SO noiseScriptableObject;
+  [SerializeField]
+  private int chunkCountX = 4;
+  [SerializeField]
+  private int chunkCountY = 2;
+  [SerializeField]
+  private int chunkCountZ = 4;
+  [SerializeField]
+  private int chunkWidth = 16;
+  [SerializeField]
+  private int chunkDepth = 16;
+  [SerializeField]
+  private int chunkHeight = 32;
+  [SerializeField]
+  private float threshold = 0.5f;
+  [SerializeField]
+  private RandomNoise_SO noiseScriptableObject;
 
   private bool _isGameRunning = false;
 
@@ -50,15 +58,12 @@ public class MarchingCubesChunk : MonoBehaviour
     chunk.transform.parent = transform;
     chunk.transform.localPosition = new Vector3(x * chunkWidth, y * chunkHeight, z * chunkDepth);
 
-    Vector3 offset = new Vector3(
-      x * chunkWidth,
-      y * chunkHeight,
-      z * chunkDepth);
-    float[,,] noiseMap = noiseScriptableObject.GenerateNoiseMap(
+    Vector2 offset = new Vector2(x * chunkWidth, z * chunkDepth);
+    float[,] noiseMap2d = noiseScriptableObject.GenerateNoiseMap(
       chunkWidth + 1,
       chunkHeight + 1,
-      chunkDepth + 1,
       offset);
+    float[,,] noiseMap = NoiseUtils.Convert2DTo3D(noiseMap2d, chunkHeight);
 
     MeshFilter meshFilter = chunk.AddComponent<MeshFilter>();
     meshFilter.mesh = GenerateChunkMesh(noiseMap);
@@ -71,7 +76,7 @@ public class MarchingCubesChunk : MonoBehaviour
 
   private Mesh GenerateChunkMesh(float[,,] noiseMap)
   {
-    Mesh mesh = MarchingCubes.GenerateMesh(chunkWidth, chunkHeight, chunkDepth, noiseMap, threshold);
+    Mesh mesh = MarchingCubes.GenerateMesh(noiseMap, threshold);
     return mesh;
   }
 

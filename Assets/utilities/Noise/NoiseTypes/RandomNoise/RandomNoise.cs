@@ -38,6 +38,20 @@ namespace Noise
     /// </summary>
     /// <param name="noiseScriptableObject">The scriptable object containing noise parameters.</param>
     /// <returns>A 2D array of floats representing the noise map.</returns>
+    public static float[,] GenerateRandomNoiseMap(int width, int height, Vector2 offset, RandomNoise_SO noiseScriptableObject)
+    {
+      return GenerateRandomNoiseMap(
+          width,
+          height,
+          noiseScriptableObject.Seed,
+          offset);
+    }
+
+    /// <summary>
+    /// Generates a random noise map using parameters from a Noise_SO scriptable object.
+    /// </summary>
+    /// <param name="noiseScriptableObject">The scriptable object containing noise parameters.</param>
+    /// <returns>A 2D array of floats representing the noise map.</returns>
     public static float[,] GenerateRandomNoiseMap(int width, int height, RandomNoise_SO noiseScriptableObject)
     {
       return GenerateRandomNoiseMap(

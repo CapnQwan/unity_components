@@ -5,12 +5,13 @@ using UnityEngine;
 public static class MarchingCubes
 {
   public static Mesh GenerateMesh(
-    int width,
-    int height,
-    int depth,
     float[,,] scalarMap,
     float threshold)
   {
+    int width = scalarMap.GetLength(0) - 1;
+    int height = scalarMap.GetLength(1) - 1;
+    int depth = scalarMap.GetLength(2) - 1;
+
     Mesh mesh = new Mesh
     {
       name = $"Marching_Squares_{width}x{height}",
@@ -25,6 +26,7 @@ public static class MarchingCubes
 
     // Create tasks for each slice of the grid
     List<Task> tasks = new List<Task>();
+
     for (int x = 0; x < width; x++)
     {
       int xCopy = x; // Avoid closure issues
@@ -94,7 +96,8 @@ public static class MarchingCubes
     List<Vector2> localUVs)
   {
     // Get scalar values for the cube's 8 vertices
-    float[] scalarValues = getScalarValues(scalarMap, x, y, z);
+    float[] scalarValues = GetScalarValues(scalarMap, x, y, z);
+
     // Calculate the case index
     int caseIndex = GetCaseIndex(scalarValues, threshold);
 
@@ -120,14 +123,14 @@ public static class MarchingCubes
   /// The cube is defined by its bottom-left-front corner (x, y, z) and has a
   /// size of 2x2x2.
   /// </summary>
-  /// <param name="scalarMap"></param>
-  /// <param name="x"></param>
-  /// <param name="y"></param>
-  /// <param name="z"></param>
+  /// <param name="scalarMap">The scalar map values from 0 to 1 that determine the position of the vertices.</param>
+  /// <param name="x">The x-coordinate of the cube's bottom-left-front corner.</param>
+  /// <param name="y">The y-coordinate of the cube's bottom-left-front corner.</param>
+  /// <param name="z">The z-coordinate of the cube's bottom-left-front corner.</param>
   /// <returns>
   /// The scalar values for the vertices of a cube in the scalar map.
   /// </returns>
-  private static float[] getScalarValues(
+  public static float[] GetScalarValues(
     float[,,] scalarMap,
     int x,
     int y,
@@ -156,7 +159,7 @@ public static class MarchingCubes
   /// <returns>
   /// The case index for the cube based on the scalar values and threshold.
   /// </returns>
-  private static int GetCaseIndex(float[] scalarValues, float threshold)
+  public static int GetCaseIndex(float[] scalarValues, float threshold)
   {
     int caseIndex = 0;
 
@@ -193,8 +196,10 @@ public static class MarchingCubes
       float value2 = scalarValues[edgeVertices[1]];
 
       float t = Mathf.Clamp01((threshold - value1) / (value2 - value1));
+
       vertices.Add(Vector3.Lerp(vertex1, vertex2, t));
     }
+
     return vertices;
   }
 
