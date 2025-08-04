@@ -6,7 +6,7 @@ public class MarchingCubesGrid : MonoBehaviour
   // Public fields
   public GameObject PointPrefab;
   public GameObject TextPrefab;
-  public PerlinNoise3D_SO NoiseScriptableObject;
+  public RandomNoise_SO NoiseScriptableObject;
   public int Width;
   public int Height;
   public int Depth;
@@ -81,7 +81,11 @@ public class MarchingCubesGrid : MonoBehaviour
 
   private void UpdateNoiseMap()
   {
-    _noiseMap = NoiseScriptableObject.GenerateNoiseMap(Width + 1, Height + 1, Depth + 1);
+    float[,] noiseMap2d = NoiseScriptableObject.GenerateNoiseMap(
+      Width + 1,
+      Depth + 1);
+
+    _noiseMap = NoiseUtils.Convert2DTo3D(noiseMap2d, Height + 1);
   }
 
   private void UpdateMesh()
@@ -138,6 +142,11 @@ public class MarchingCubesGrid : MonoBehaviour
         {
           float[] scalarValues = MarchingCubes.GetScalarValues(_noiseMap, x, y, z);
           int caseIndex = MarchingCubes.GetCaseIndex(scalarValues, Threshold);
+
+          if (caseIndex is 0 or 255)
+          {
+            continue; // Skip empty cases
+          }
 
           GameObject textObject = _textPool.GetItem();
           textObject.transform.parent = transform;

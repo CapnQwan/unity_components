@@ -195,7 +195,9 @@ public static class MarchingCubes
       float value1 = scalarValues[edgeVertices[0]];
       float value2 = scalarValues[edgeVertices[1]];
 
-      float t = Mathf.Clamp01((threshold - value1) / (value2 - value1));
+      float t = 0.5f; // Mathf.Clamp01((threshold - value1) / (value2 - value1));
+
+      Debug.Log(Vector3.Lerp(vertex1, vertex2, t));
 
       vertices.Add(Vector3.Lerp(vertex1, vertex2, t));
     }
@@ -214,6 +216,8 @@ public static class MarchingCubes
       triangles.Add(i + 1 + offset);
       triangles.Add(i + 2 + offset);
     }
+
+    Debug.Log(string.Join(", ", triangles));
 
     return triangles;
   }

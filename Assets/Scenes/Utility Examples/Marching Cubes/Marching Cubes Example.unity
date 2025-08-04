@@ -159,7 +159,7 @@ MonoBehaviour:
   chunkDepth: 16
   chunkHeight: 16
   threshold: 0.3
-  noiseScriptableObject: {fileID: 11400000, guid: 361594000aa4ed2468655ad2fc752d18, type: 2}
+  noiseScriptableObject: {fileID: 11400000, guid: 2523f9fda7857fb4396c43f05f3f005e, type: 2}
 --- !u!4 &156718163
 Transform:
   m_ObjectHideFlags: 0
