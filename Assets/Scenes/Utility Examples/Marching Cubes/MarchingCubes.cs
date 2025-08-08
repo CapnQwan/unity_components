@@ -110,16 +110,22 @@ public static class MarchingCubes
 
       int numTriangles = PolygoniseTri(
         localVertices,
-        localTriangles,
         polygonIndices,
         polygonScalarValues,
         threshold);
+
+      for (int j = 0; j < numTriangles; j++)
+      {
+        int triangleOffset = numTriangles * 3;
+        localTriangles.Add(localVertices.Count - triangleOffset);
+        localTriangles.Add(localVertices.Count - triangleOffset + 1);
+        localTriangles.Add(localVertices.Count - triangleOffset + 2);
+      }
     }
   }
 
   private static int PolygoniseTri(
     List<Vector3> localVertices,
-    List<int> localTriangles,
     int[] polygonIndices,
     float[] scalarValues,
     float threshold)
@@ -127,15 +133,22 @@ public static class MarchingCubes
     int triCount = 0;
     int triCase = 0;
 
-    if (scalarValues[0] > threshold) triCase |= 1;
-    if (scalarValues[1] > threshold) triCase |= 2;
-    if (scalarValues[2] > threshold) triCase |= 4;
-    if (scalarValues[3] > threshold) triCase |= 8;
+    Vector3 v0 = MarchingCubesLookupTable.Verticies[polygonIndices[0]];
+    Vector3 v1 = MarchingCubesLookupTable.Verticies[polygonIndices[1]];
+    Vector3 v2 = MarchingCubesLookupTable.Verticies[polygonIndices[2]];
+    Vector3 v3 = MarchingCubesLookupTable.Verticies[polygonIndices[3]];
 
-    Vector3 vector0 = MarchingCubesLookupTable.Verticies[polygonIndices[0]];
-    Vector3 vector1 = MarchingCubesLookupTable.Verticies[polygonIndices[1]];
-    Vector3 vector2 = MarchingCubesLookupTable.Verticies[polygonIndices[2]];
-    Vector3 vector3 = MarchingCubesLookupTable.Verticies[polygonIndices[3]];
+    float s0 = scalarValues[0];
+    float s1 = scalarValues[1];
+    float s2 = scalarValues[2];
+    float s3 = scalarValues[3];
+
+    if (s0 > threshold) triCase |= 1;
+    if (s1 > threshold) triCase |= 2;
+    if (s2 > threshold) triCase |= 4;
+    if (s3 > threshold) triCase |= 8;
+
+    float t = threshold;
 
     switch (triCase)
     {
@@ -144,90 +157,65 @@ public static class MarchingCubes
         break; // No vertices to create
       case 0x0E:
       case 0x01:
-        localVertices.Add(GetInterpolateVertex(
-          vector0,
-          vector1,
-          scalarValues[0],
-          scalarValues[1],
-          threshold));
-        localVertices.Add(GetInterpolateVertex(
-          vector0,
-          vector2,
-          scalarValues[0],
-          scalarValues[2],
-          threshold));
-        localVertices.Add(GetInterpolateVertex(
-          vector0,
-          vector3,
-          scalarValues[0],
-          scalarValues[3],
-          threshold));
+        localVertices.Add(GetInterpolateVertex(v0, v1, s0, s1, t));
+        localVertices.Add(GetInterpolateVertex(v0, v2, s0, s2, t));
+        localVertices.Add(GetInterpolateVertex(v0, v3, s0, s3, t));
         triCount++;
         break;
       case 0x0D:
       case 0x02:
-        localVertices.Add(GetInterpolateVertex(
-          vector1,
-          vector0,
-          scalarValues[1],
-          scalarValues[0],
-          threshold));
-        localVertices.Add(GetInterpolateVertex(
-          vector1,
-          vector3,
-          scalarValues[1],
-          scalarValues[3],
-          threshold));
-        localVertices.Add(GetInterpolateVertex(
-          vector1,
-          vector2,
-          scalarValues[1],
-          scalarValues[2],
-          threshold));
+        localVertices.Add(GetInterpolateVertex(v1, v0, s1, s0, t));
+        localVertices.Add(GetInterpolateVertex(v1, v3, s1, s3, t));
+        localVertices.Add(GetInterpolateVertex(v1, v2, s1, s2, t));
         triCount++;
         break;
       case 0x0C:
       case 0x03:
-        localVertices.Add(GetInterpolateVertex(
-          vector1,
-          vector0,
-          scalarValues[1],
-          scalarValues[0],
-          threshold));
-        localVertices.Add(GetInterpolateVertex(
-          vector1,
-          vector3,
-          scalarValues[1],
-          scalarValues[3],
-          threshold));
-        localVertices.Add(GetInterpolateVertex(
-          vector1,
-          vector2,
-          scalarValues[1],
-          scalarValues[2],
-          threshold));
+        localVertices.Add(GetInterpolateVertex(v0, v3, s0, s3, t));
+        localVertices.Add(GetInterpolateVertex(v0, v2, s0, s2, t));
+        localVertices.Add(GetInterpolateVertex(v1, v3, s1, s3, t));
         triCount++;
-        localVertices.Add(GetInterpolateVertex(
-          vector1,
-          vector0,
-          scalarValues[1],
-          scalarValues[0],
-          threshold));
-        localVertices.Add(GetInterpolateVertex(
-          vector1,
-          vector3,
-          scalarValues[1],
-          scalarValues[3],
-          threshold));
-        localVertices.Add(GetInterpolateVertex(
-          vector1,
-          vector2,
-          scalarValues[1],
-          scalarValues[2],
-          threshold));
+        localVertices.Add(GetInterpolateVertex(v1, v3, s1, s3, t));
+        localVertices.Add(GetInterpolateVertex(v1, v2, s1, s2, t));
+        localVertices.Add(GetInterpolateVertex(v0, v2, s0, s2, t));
         triCount++;
         break;
-
+      case 0x0B:
+      case 0x04:
+        localVertices.Add(GetInterpolateVertex(v2, v0, s2, s0, t));
+        localVertices.Add(GetInterpolateVertex(v2, v1, s2, s1, t));
+        localVertices.Add(GetInterpolateVertex(v2, v3, s2, s3, t));
+        triCount++;
+        break;
+      case 0x0A:
+      case 0x05:
+        localVertices.Add(GetInterpolateVertex(v0, v1, s0, s1, t));
+        localVertices.Add(GetInterpolateVertex(v2, v3, s2, s3, t));
+        localVertices.Add(GetInterpolateVertex(v0, v3, s0, s3, t));
+        triCount++;
+        localVertices.Add(GetInterpolateVertex(v0, v1, s0, s1, t));
+        localVertices.Add(GetInterpolateVertex(v1, v2, s1, s2, t));
+        localVertices.Add(GetInterpolateVertex(v2, v3, s2, s3, t));
+        triCount++;
+        break;
+      case 0x09:
+      case 0x06:
+        localVertices.Add(GetInterpolateVertex(v0, v1, s0, s1, t));
+        localVertices.Add(GetInterpolateVertex(v1, v3, s1, s3, t));
+        localVertices.Add(GetInterpolateVertex(v2, v3, s2, s3, t));
+        triCount++;
+        localVertices.Add(GetInterpolateVertex(v0, v1, s0, s1, t));
+        localVertices.Add(GetInterpolateVertex(v0, v2, s0, s2, t));
+        localVertices.Add(GetInterpolateVertex(v2, v3, s2, s3, t));
+        triCount++;
+        break;
+      case 0x07:
+      case 0x08:
+        localVertices.Add(GetInterpolateVertex(v3, v0, s3, s0, t));
+        localVertices.Add(GetInterpolateVertex(v3, v2, s3, s2, t));
+        localVertices.Add(GetInterpolateVertex(v3, v1, s3, s1, t));
+        triCount++;
+        break;
     }
 
     return triCount;

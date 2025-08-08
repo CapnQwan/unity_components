@@ -5,21 +5,19 @@ public class MarchingCubesGrid : MonoBehaviour
 {
   // Public fields
   public GameObject PointPrefab;
-  public GameObject TextPrefab;
   public RandomNoise_SO NoiseScriptableObject;
   public int Width;
   public int Height;
   public int Depth;
+  [Range(0.0f, 1.0f)]
   public float Threshold;
   public bool IsRenderingPoints;
-  public bool IsRenderingText;
   public bool IsRenderingMesh;
 
   // Private fields
   private float[,,] _noiseMap;
   private bool _isGameRunning = false;
   private GameObjectPool _pointsPool;
-  private GameObjectPool _textPool;
   private MeshFilter _meshFilter;
   private MeshRenderer _meshRenderer;
   private Mesh _mesh;
@@ -28,7 +26,6 @@ public class MarchingCubesGrid : MonoBehaviour
   public void Awake()
   {
     _pointsPool = new GameObjectPool(PointPrefab, 50);
-    _textPool = new GameObjectPool(TextPrefab, 50);
   }
 
   public void Start()
@@ -36,7 +33,6 @@ public class MarchingCubesGrid : MonoBehaviour
     SetupRendering();
     UpdateNoiseMap();
     GeneratePoints();
-    GenerateCaseIndexIndicator();
     UpdateMesh();
     SetGameRunning(true);
   }
@@ -47,7 +43,6 @@ public class MarchingCubesGrid : MonoBehaviour
     {
       UpdateNoiseMap();
       GeneratePoints();
-      GenerateCaseIndexIndicator();
       UpdateMesh();
     }
   }
@@ -121,39 +116,6 @@ public class MarchingCubesGrid : MonoBehaviour
 
           MeshRenderer meshRenderer = point.GetComponent<MeshRenderer>();
           meshRenderer.material.color = noiseValue > Threshold ? Color.black : Color.white;
-        }
-      }
-    }
-  }
-
-  private void GenerateCaseIndexIndicator()
-  {
-    if (!IsRenderingText)
-    {
-      _textPool.FinishedUsingAllItems();
-      return;
-    }
-
-    for (int x = 0; x < Width; x++)
-    {
-      for (int y = 0; y < Height; y++)
-      {
-        for (int z = 0; z < Depth; z++)
-        {
-          float[] scalarValues = MarchingCubes.GetScalarValues(_noiseMap, x, y, z);
-          int caseIndex = MarchingCubes.GetCaseIndex(scalarValues, Threshold);
-
-          if (caseIndex is 0 or 255)
-          {
-            continue; // Skip empty cases
-          }
-
-          GameObject textObject = _textPool.GetItem();
-          textObject.transform.parent = transform;
-          textObject.transform.position = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
-
-          TextMeshPro textMeshPro = textObject.GetComponent<TextMeshPro>();
-          textMeshPro.text = caseIndex.ToString();
         }
       }
     }
