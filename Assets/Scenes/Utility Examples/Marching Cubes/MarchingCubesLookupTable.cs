@@ -37,14 +37,14 @@ public static class MarchingCubesLookupTable
 {
   public static readonly Vector3[] CellVertices =
   {
-    new Vector3(0, 0, 1), // 0
-    new Vector3(1, 0, 1), // 1
-    new Vector3(1, 0, 0), // 2
-    new Vector3(0, 0, 0), // 3
-    new Vector3(0, 1, 1), // 4
-    new Vector3(1, 1, 1), // 5
-    new Vector3(1, 1, 0), // 6
-    new Vector3(0, 1, 0), // 7
+    new Vector3(0, 0, 0), // 0
+    new Vector3(1, 0, 0), // 1
+    new Vector3(1, 1, 0), // 2
+    new Vector3(0, 1, 0), // 3
+    new Vector3(0, 0, 1), // 4
+    new Vector3(1, 0, 1), // 5
+    new Vector3(1, 1, 1), // 6
+    new Vector3(0, 1, 1), // 7
   };
 
   public static readonly int[] Edges =

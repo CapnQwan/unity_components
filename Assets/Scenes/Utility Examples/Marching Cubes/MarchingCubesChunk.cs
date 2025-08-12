@@ -15,6 +15,7 @@ public class MarchingCubesChunk : MonoBehaviour
   [SerializeField]
   private int chunkHeight = 32;
   [SerializeField]
+  [Range(0.0f, 1.0f)]
   private float threshold = 0.5f;
   [SerializeField]
   private RandomNoise_SO noiseScriptableObject;

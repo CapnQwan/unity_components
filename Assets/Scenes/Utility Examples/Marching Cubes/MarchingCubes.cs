@@ -40,19 +40,19 @@ public static class MarchingCubes
         {
           for (int z = 0; z < depth; z++)
           {
-            IsoGridCell cell = new IsoGridCell(new Vector3(xCopy, y, z), new int[8]
+            IsoGridCell cell = new IsoGridCell(new Vector3(xCopy, y, z), new float[8]
             {
-              (int)scalarMap[xCopy, y, z],
-              (int)scalarMap[xCopy + 1, y, z],
-              (int)scalarMap[xCopy + 1, y + 1, z],
-              (int)scalarMap[xCopy, y + 1, z],
-              (int)scalarMap[xCopy, y, z + 1],
-              (int)scalarMap[xCopy + 1, y, z + 1],
-              (int)scalarMap[xCopy + 1, y + 1, z + 1],
-              (int)scalarMap[xCopy, y + 1, z + 1],
+              scalarMap[xCopy, y, z],
+              scalarMap[xCopy + 1, y, z],
+              scalarMap[xCopy + 1, y + 1, z],
+              scalarMap[xCopy, y + 1, z],
+              scalarMap[xCopy, y, z + 1],
+              scalarMap[xCopy + 1, y, z + 1],
+              scalarMap[xCopy + 1, y + 1, z + 1],
+              scalarMap[xCopy, y + 1, z + 1],
             });
 
-            GenerateMeshSlice(cell, threshold, localVertices, localTriangles, localUVs);
+            GenerateMeshSlice(cell, width, depth, threshold, localVertices, localTriangles, localUVs);
           }
         }
 
@@ -85,25 +85,6 @@ public static class MarchingCubes
     return mesh;
   }
 
-  private static void GenerateMeshSlice(
-    IsoGridCell cell,
-    float threshold,
-    List<Vector3> localVertices,
-    List<int> localTriangles,
-    List<Vector2> localUVs)
-  {
-    // Calculate the case index
-    int caseIndex = GetCaseIndex(cell, threshold);
-
-    // Interpolate vertices along intersected edges
-    List<Vector3> vertices = GetVerticies(caseIndex, cell, threshold);
-    List<int> triangles = CreateTriangleIndices(caseIndex, localVertices.Count);
-    CreateUVs(localUVs, vertices, width, depth);
-
-    localVertices.AddRange(vertices);
-    localTriangles.AddRange(triangles);
-  }
-
   /// <summary>
   /// Get the case index for the cube based on the scalar values and threshold.
   /// The case index is a bitmask where each bit represents whether the
@@ -130,39 +111,64 @@ public static class MarchingCubes
     return caseIndex;
   }
 
+  private static void GenerateMeshSlice(
+    IsoGridCell cell,
+    int width,
+    int depth,
+    float threshold,
+    List<Vector3> localVertices,
+    List<int> localTriangles,
+    List<Vector2> localUVs)
+  {
+    // Calculate the case index
+    int caseIndex = GetCaseIndex(cell, threshold);
+
+    // Interpolate vertices along intersected edges
+    List<Vector3> vertices = GetVerticies(caseIndex, cell, threshold);
+    List<int> triangles = CreateTriangleIndices(vertices.Count, localVertices.Count);
+    CreateUVs(localUVs, vertices, width, depth);
+
+    localVertices.AddRange(vertices);
+    localTriangles.AddRange(triangles);
+  }
+
   private static List<Vector3> GetVerticies(
     int caseIndex,
     IsoGridCell cell,
     float threshold)
   {
     List<Vector3> vertices = new List<Vector3>();
-    for (int i = 0; i < 16; i += 3)
+    for (int i = 0; i <= 12; i += 3)
     {
-      int triA = MarchingCubesLookupTable.Triangulation[caseIndex, i];
-      int triB = MarchingCubesLookupTable.Triangulation[caseIndex, i + 1];
-      int triC = MarchingCubesLookupTable.Triangulation[caseIndex, i + 2];
+      int triIndexA = MarchingCubesLookupTable.Triangulation[caseIndex, i];
+      int triIndexB = MarchingCubesLookupTable.Triangulation[caseIndex, i + 1];
+      int triIndexC = MarchingCubesLookupTable.Triangulation[caseIndex, i + 2];
 
-      if (triA == -1) break;
-
-      int edgeIndex = triangleEdges[i];
-
-      int indexA = MarchingCubesLookupTable.CornerIndexAFromEdge[edgeIndex];
-      int indexB = MarchingCubesLookupTable.CornerIndexBFromEdge[edgeIndex];
+      if (triIndexA == -1) break;
 
       vertices.Add(InterpolateVertex(
-        position + MarchingCubesLookupTable.CellVertices[indexA],
-        position + MarchingCubesLookupTable.CellVertices[indexB],
-        scalarValues[indexA],
-        scalarValues[indexB],
+        cell.Vertices[MarchingCubesLookupTable.CornerIndexAFromEdge[triIndexA]],
+        cell.Vertices[MarchingCubesLookupTable.CornerIndexBFromEdge[triIndexA]],
+        cell.IsoValues[MarchingCubesLookupTable.CornerIndexAFromEdge[triIndexA]],
+        cell.IsoValues[MarchingCubesLookupTable.CornerIndexBFromEdge[triIndexA]],
+        threshold));
+
+      vertices.Add(InterpolateVertex(
+        cell.Vertices[MarchingCubesLookupTable.CornerIndexAFromEdge[triIndexB]],
+        cell.Vertices[MarchingCubesLookupTable.CornerIndexBFromEdge[triIndexB]],
+        cell.IsoValues[MarchingCubesLookupTable.CornerIndexAFromEdge[triIndexB]],
+        cell.IsoValues[MarchingCubesLookupTable.CornerIndexBFromEdge[triIndexB]],
+        threshold));
+
+      vertices.Add(InterpolateVertex(
+        cell.Vertices[MarchingCubesLookupTable.CornerIndexAFromEdge[triIndexC]],
+        cell.Vertices[MarchingCubesLookupTable.CornerIndexBFromEdge[triIndexC]],
+        cell.IsoValues[MarchingCubesLookupTable.CornerIndexAFromEdge[triIndexC]],
+        cell.IsoValues[MarchingCubesLookupTable.CornerIndexBFromEdge[triIndexC]],
         threshold));
     }
 
     return vertices;
-  }
-
-  private static int IndexFromCoords(int x, int y, int z, int width, int height, int depth)
-  {
-    return x * width + y * height + z * depth;
   }
 
   private static Vector3 InterpolateVertex(
@@ -176,13 +182,12 @@ public static class MarchingCubes
     return Vector3.Lerp(vertex1, vertex2, t);
   }
 
-  private static List<int> CreateTriangleIndices(int[] triangleEdges, int offset)
+  private static List<int> CreateTriangleIndices(int vertexCount, int offset)
   {
     List<int> triangles = new List<int>();
 
-    for (int i = 0; i < triangleEdges.Length; i += 3)
+    for (int i = 0; i < vertexCount; i += 3)
     {
-      if (triangleEdges[i] == -1) break;
       triangles.Add(i + offset);
       triangles.Add(i + 1 + offset);
       triangles.Add(i + 2 + offset);

@@ -3,9 +3,9 @@ using UnityEngine;
 public struct IsoGridCell
 {
   public Vector3[] Vertices;
-  public int[] IsoValues;
+  public float[] IsoValues;
 
-  public IsoGridCell(Vector3 position, int[] isoValues)
+  public IsoGridCell(Vector3 position, float[] isoValues)
   {
     Vertices = new Vector3[]
     {

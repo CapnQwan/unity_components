@@ -158,7 +158,7 @@ MonoBehaviour:
   chunkWidth: 16
   chunkDepth: 16
   chunkHeight: 16
-  threshold: 0.3
+  threshold: 0.5
   noiseScriptableObject: {fileID: 11400000, guid: 2523f9fda7857fb4396c43f05f3f005e, type: 2}
 --- !u!4 &156718163
 Transform:
@@ -220,14 +220,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointPrefab: {fileID: 5601100186453632130, guid: 96a23d3985d838a43abd2c5e0cbb1bf8, type: 3}
-  TextPrefab: {fileID: 7997369890489119857, guid: 549f2cf9d95e6fe4296e60ba96af592c, type: 3}
-  NoiseScriptableObject: {fileID: 11400000, guid: 5c3e30d608648ee4996316b9cc0067b0, type: 2}
-  Width: 4
-  Height: 3
-  Depth: 4
-  Threshold: 0.33
+  NoiseScriptableObject: {fileID: 11400000, guid: 2523f9fda7857fb4396c43f05f3f005e, type: 2}
+  Width: 10
+  Height: 10
+  Depth: 10
+  Threshold: 0.418
   IsRenderingPoints: 0
-  IsRenderingText: 1
   IsRenderingMesh: 1
 --- !u!1 &1503775510
 GameObject:
