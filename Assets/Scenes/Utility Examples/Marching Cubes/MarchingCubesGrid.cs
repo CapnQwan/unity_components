@@ -12,6 +12,7 @@ public class MarchingCubesGrid : MonoBehaviour
   public float Threshold;
   public bool IsRenderingPoints;
   public bool IsRenderingMesh;
+  public bool IsRenderingEdges;
 
   // Private fields
   private float[,,] _noiseMap;
@@ -75,6 +76,12 @@ public class MarchingCubesGrid : MonoBehaviour
 
   private void UpdateNoiseMap()
   {
+    if (NoiseScriptableObject is RandomNoise3D_SO noise3DSO)
+    {
+      _noiseMap = noise3DSO.GenerateNoiseMap(Width + 1, Height + 1, Depth + 1);
+      return;
+    }
+
     float[,] noiseMap2d = NoiseScriptableObject.GenerateNoiseMap(
       Width + 1,
       Depth + 1);
@@ -122,6 +129,6 @@ public class MarchingCubesGrid : MonoBehaviour
 
   private Mesh GenerateMesh()
   {
-    return MarchingCubes.GenerateMesh(_noiseMap, Threshold);
+    return MarchingCubes.GenerateMesh(_noiseMap, Threshold, IsRenderingEdges);
   }
 }

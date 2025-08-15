@@ -60,11 +60,7 @@ public class MarchingCubesChunk : MonoBehaviour
     chunk.transform.localPosition = new Vector3(x * chunkWidth, y * chunkHeight, z * chunkDepth);
 
     Vector2 offset = new Vector2(x * chunkWidth, z * chunkDepth);
-    float[,] noiseMap2d = noiseScriptableObject.GenerateNoiseMap(
-      chunkWidth + 1,
-      chunkHeight + 1,
-      offset);
-    float[,,] noiseMap = NoiseUtils.Convert2DTo3D(noiseMap2d, chunkHeight);
+    float[,,] noiseMap = GenerateNoiseMap(offset);
 
     MeshFilter meshFilter = chunk.AddComponent<MeshFilter>();
     meshFilter.mesh = GenerateChunkMesh(noiseMap);
@@ -73,6 +69,20 @@ public class MarchingCubesChunk : MonoBehaviour
     meshRenderer.material = new Material(Shader.Find("Standard"));
 
     chunk.transform.parent = transform;
+  }
+
+  private float[,,] GenerateNoiseMap(Vector2 offset)
+  {
+    if (noiseScriptableObject is RandomNoise3D_SO noise3DSO)
+    {
+      return noise3DSO.GenerateNoiseMap(chunkWidth + 1, chunkHeight + 1, chunkDepth + 1, offset);
+    }
+
+    float[,] noiseMap2d = noiseScriptableObject.GenerateNoiseMap(
+      chunkWidth + 1,
+      chunkDepth + 1,
+      offset);
+    return NoiseUtils.Convert2DTo3D(noiseMap2d, chunkHeight);
   }
 
   private Mesh GenerateChunkMesh(float[,,] noiseMap)

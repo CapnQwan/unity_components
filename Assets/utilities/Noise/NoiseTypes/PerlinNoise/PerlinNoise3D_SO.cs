@@ -4,7 +4,7 @@ using UnityEngine;
 /// A ScriptableObject class for configuring Perlin noise generation parameters.
 /// </summary>
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Noise3D/PerlinNoise3D", order = 2)]
-public class PerlinNoise3D_SO : ScriptableObject
+public class PerlinNoise3D_SO : RandomNoise3D_SO
 {
 
   /// <summary>
@@ -121,7 +121,7 @@ public class PerlinNoise3D_SO : ScriptableObject
   /// Generates a Perlin noise map based on the configured parameters.
   /// </summary>
   /// <returns>A 3D array of float values representing the Perlin noise map.</returns>
-  public float[,,] GenerateNoiseMap(int width, int height, int depth)
+  public override float[,,] GenerateNoiseMap(int width, int height, int depth)
   {
     return Noise.PerlinNoise3D.GeneratePerlinNoiseMap(width, height, depth, this);
   }
@@ -130,7 +130,7 @@ public class PerlinNoise3D_SO : ScriptableObject
   /// Generates a Perlin noise map based on the configured parameters.
   /// </summary>
   /// <returns>A 3D array of float values representing the Perlin noise map.</returns>
-  public float[,,] GenerateNoiseMap(int width, int height, int depth, Vector3 offset)
+  public override float[,,] GenerateNoiseMap(int width, int height, int depth, Vector3 offset)
   {
     return Noise.PerlinNoise3D.GeneratePerlinNoiseMap(width, height, depth, offset, this);
   }
@@ -139,7 +139,7 @@ public class PerlinNoise3D_SO : ScriptableObject
   /// Generates a Perlin noise map based on the configured parameters.
   /// </summary>
   /// <returns>A 3D array of float values representing the Perlin noise map.</returns>
-  public float[,,] GenerateNoiseMap()
+  public override float[,,] GenerateNoiseMap()
   {
     return Noise.PerlinNoise3D.GeneratePerlinNoiseMap(this);
   }

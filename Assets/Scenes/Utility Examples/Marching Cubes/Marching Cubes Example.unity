@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &156718162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,7 +159,7 @@ MonoBehaviour:
   chunkDepth: 16
   chunkHeight: 16
   threshold: 0.5
-  noiseScriptableObject: {fileID: 11400000, guid: 2523f9fda7857fb4396c43f05f3f005e, type: 2}
+  noiseScriptableObject: {fileID: 11400000, guid: 5c3e30d608648ee4996316b9cc0067b0, type: 2}
 --- !u!4 &156718163
 Transform:
   m_ObjectHideFlags: 0
@@ -191,7 +191,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &304543067
 Transform:
   m_ObjectHideFlags: 0
