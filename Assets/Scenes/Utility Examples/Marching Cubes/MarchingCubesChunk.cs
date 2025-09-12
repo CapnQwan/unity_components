@@ -19,8 +19,17 @@ public class MarchingCubesChunk : MonoBehaviour
   private float threshold = 0.5f;
   [SerializeField]
   private RandomNoise_SO noiseScriptableObject;
+  [SerializeField]
+  private bool hasCollisions;
+  [SerializeField]
+  private Material material;
 
   private bool _isGameRunning = false;
+
+  public void Awake()
+  {
+    noiseScriptableObject.OnValuesChanged += GenerateChunks;
+  }
 
   public void Start()
   {
@@ -66,7 +75,13 @@ public class MarchingCubesChunk : MonoBehaviour
     meshFilter.mesh = GenerateChunkMesh(noiseMap);
 
     MeshRenderer meshRenderer = chunk.AddComponent<MeshRenderer>();
-    meshRenderer.material = new Material(Shader.Find("Standard"));
+    meshRenderer.material = material ?? new Material(Shader.Find("Standard"));
+
+    if (hasCollisions)
+    {
+      MeshCollider meshCollider = chunk.AddComponent<MeshCollider>();
+      meshCollider.sharedMesh = meshFilter.mesh;
+    }
 
     chunk.transform.parent = transform;
   }

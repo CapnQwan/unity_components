@@ -11,6 +11,8 @@ public static class MarchingCubes
   {
     Vector3Int dimensions = new Vector3Int(scalarMap.GetLength(0) - 1, scalarMap.GetLength(1) - 1, scalarMap.GetLength(2) - 1);
 
+    MarchingCubesOptions options = new MarchingCubesOptions(isRenderingEdges, threshold, dimensions);
+
     Mesh mesh = new Mesh
     {
       name = $"Marching_Squares_{dimensions.x}x{dimensions.y}x{dimensions.z}",
@@ -31,9 +33,7 @@ public static class MarchingCubes
       int xCopy = x; // Avoid closure issues
       tasks.Add(Task.Run(() =>
       {
-        List<Vector3> localVertices = new List<Vector3>();
-        List<int> localTriangles = new List<int>();
-        List<Vector2> localUVs = new List<Vector2>();
+        MarchingCubesMeshRow meshRow = new MarchingCubesMeshRow(new Vector3(xCopy, 0, 0));
 
         for (int y = 0; y < dimensions.y; y++)
         {
@@ -41,28 +41,24 @@ public static class MarchingCubes
           {
             IsoGridCell cell = new IsoGridCell(new Vector3(xCopy, y, z), new float[8]
             {
-              scalarMap[xCopy, y, z],
-              scalarMap[xCopy + 1, y, z],
-              scalarMap[xCopy + 1, y + 1, z],
-              scalarMap[xCopy, y + 1, z],
-              scalarMap[xCopy, y, z + 1],
-              scalarMap[xCopy + 1, y, z + 1],
-              scalarMap[xCopy + 1, y + 1, z + 1],
-              scalarMap[xCopy, y + 1, z + 1],
+              scalarMap[xCopy, y, z], scalarMap[xCopy + 1, y, z],
+              scalarMap[xCopy + 1, y + 1, z], scalarMap[xCopy, y + 1, z],
+              scalarMap[xCopy, y, z + 1], scalarMap[xCopy + 1, y, z + 1],
+              scalarMap[xCopy + 1, y + 1, z + 1], scalarMap[xCopy, y + 1, z + 1],
             });
 
-            GenerateMeshSlice(cell, dimensions, threshold, localVertices, localTriangles, localUVs, isRenderingEdges);
+            GenerateMeshSlice(cell, meshRow, options);
           }
         }
 
-        // Lock and add local results to the main lists
+        // Lock and add local results to the main lists 
         lock (lockObject)
         {
           int vertexOffset = vertices.Count;
-          vertices.AddRange(localVertices);
-          uvs.AddRange(localUVs);
+          vertices.AddRange(meshRow.Vertices);
+          uvs.AddRange(meshRow.UVs);
 
-          foreach (int triangle in localTriangles)
+          foreach (int triangle in meshRow.Triangles)
           {
             triangles.Add(triangle + vertexOffset);
           }
@@ -112,32 +108,19 @@ public static class MarchingCubes
 
   private static void GenerateMeshSlice(
     IsoGridCell cell,
-    Vector3Int dimensions,
-    float threshold,
-    List<Vector3> localVertices,
-    List<int> localTriangles,
-    List<Vector2> localUVs,
-    bool isRenderingEdges)
+    MarchingCubesMeshRow meshRow,
+    MarchingCubesOptions options)
   {
     // Calculate the case index
-    int caseIndex = GetCaseIndex(cell, threshold);
+    int caseIndex = GetCaseIndex(cell, options.Threshold);
 
     // Interpolate vertices along intersected edges
-    List<Vector3> vertices = GetVerticies(caseIndex, cell, threshold);
-    List<int> triangles = CreateTriangleIndices(vertices.Count, localVertices.Count);
-    CreateUVs(localUVs, vertices, dimensions.x, dimensions.z);
+    List<Vector3> vertices = GetVerticies(caseIndex, cell, options.Threshold);
+    List<int> triangles = CreateTriangleIndices(vertices.Count, meshRow.Vertices.Count);
+    CreateUVs(meshRow.UVs, vertices, options.Dimensions);
 
-    localVertices.AddRange(vertices);
-    localTriangles.AddRange(triangles);
-
-    if (isRenderingEdges)
-    {
-      // Generate edge vertices if rendering edges
-      List<Vector3> edgeVertices = GenerateEdgeVerticies(cell, dimensions, threshold);
-      List<int> edgeTriangles = generateEdgeTriangles(localVertices, edgeVertices, dimensions);
-      localVertices.AddRange(edgeVertices);
-      localTriangles.AddRange(edgeTriangles);
-    }
+    meshRow.Vertices.AddRange(vertices);
+    meshRow.Triangles.AddRange(triangles);
   }
 
   private static List<Vector3> GetVerticies(
@@ -179,55 +162,6 @@ public static class MarchingCubes
     return vertices;
   }
 
-  private static List<Vector3> GenerateEdgeVerticies(IsoGridCell cell, Vector3Int dimensions, float threshold)
-  {
-    List<Vector3> edgeVertices = new List<Vector3>();
-
-    for (int i = 0; i < cell.Vertices.Length; i++)
-    {
-      if (cell.IsoValues[i] >= threshold) continue;
-
-      if (cell.Vertices[i].x % dimensions.x == 0 ||
-          cell.Vertices[i].y % dimensions.y == 0 ||
-          cell.Vertices[i].z % dimensions.z == 0)
-      {
-        edgeVertices.Add(cell.Vertices[i]);
-      }
-    }
-
-    return edgeVertices;
-  }
-
-  private static List<int> generateEdgeTriangles(List<Vector3> cellVertices, List<Vector3> edgeVertices, Vector3Int dimensions)
-  {
-    if (edgeVertices.Count <= 0) return new List<int>();
-
-    List<Vector3> cellEdgeVertices = new List<Vector3>();
-    List<int> edgeTriangles = new List<int>();
-
-    for (int i = 0; i < cellVertices.Count; i++)
-    {
-      if (cellVertices[i].x % dimensions.x == 0 ||
-          cellVertices[i].y % dimensions.y == 0 ||
-          cellVertices[i].z % dimensions.z == 0)
-      {
-        cellEdgeVertices.Add(cellVertices[i]);
-      }
-    }
-
-    int offset = cellVertices.Count;
-
-    Debug.Log($"Edge Vertices Count: {edgeVertices.Count}");
-    Debug.Log($"Cell Edge Vertices Count: {cellEdgeVertices.Count}, Offset: {offset}");
-
-    for (int i = 0; i < edgeVertices.Count; i += 2)
-    {
-
-    }
-
-    return edgeTriangles;
-  }
-
   private static Vector3 InterpolateVertex(
     Vector3 vertex1,
     Vector3 vertex2,
@@ -256,12 +190,11 @@ public static class MarchingCubes
   private static void CreateUVs(
     List<Vector2> localUVs,
     List<Vector3> vertices,
-    int width,
-    int depth)
+    Vector3Int dimensions)
   {
     foreach (Vector3 vertex in vertices)
     {
-      localUVs.Add(new Vector2(vertex.x / width, vertex.z / depth));
+      localUVs.Add(new Vector2(vertex.x / dimensions.x, vertex.z / dimensions.z));
     }
   }
 }

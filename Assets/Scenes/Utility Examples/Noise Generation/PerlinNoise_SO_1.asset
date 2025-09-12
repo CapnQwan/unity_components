@@ -17,8 +17,8 @@ MonoBehaviour:
   seed: 3
   invert: 0
   offset: {x: 0, y: 0}
-  scale: 54.69
-  lacunarity: 1.91
-  persistance: 0.7
+  scale: 100
+  lacunarity: 1.46
+  persistance: 0.8
   octaves: 8
   normalizeMode: 1

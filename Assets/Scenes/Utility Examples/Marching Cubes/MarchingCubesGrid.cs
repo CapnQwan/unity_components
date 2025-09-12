@@ -13,6 +13,8 @@ public class MarchingCubesGrid : MonoBehaviour
   public bool IsRenderingPoints;
   public bool IsRenderingMesh;
   public bool IsRenderingEdges;
+  public bool _hasCollisions;
+  public Material Material;
 
   // Private fields
   private float[,,] _noiseMap;
@@ -20,12 +22,13 @@ public class MarchingCubesGrid : MonoBehaviour
   private GameObjectPool _pointsPool;
   private MeshFilter _meshFilter;
   private MeshRenderer _meshRenderer;
+  private MeshCollider _meshCollider;
   private Mesh _mesh;
-
   // Public methods
   public void Awake()
   {
     _pointsPool = new GameObjectPool(PointPrefab, 50);
+    NoiseScriptableObject.OnValuesChanged += UpdateMesh;
   }
 
   public void Start()
@@ -70,7 +73,12 @@ public class MarchingCubesGrid : MonoBehaviour
 
     if (_meshRenderer != null)
     {
-      _meshRenderer.material = new Material(Shader.Find("Standard"));
+      _meshRenderer.material = Material ?? new Material(Shader.Find("Standard"));
+    }
+
+    if (_hasCollisions && _meshCollider == null)
+    {
+      _meshCollider = GetComponent<MeshCollider>() ?? gameObject.AddComponent<MeshCollider>();
     }
   }
 
@@ -98,6 +106,11 @@ public class MarchingCubesGrid : MonoBehaviour
 
     _mesh = GenerateMesh();
     _meshFilter.mesh = _mesh;
+
+    if (_hasCollisions && _meshCollider != null)
+    {
+      _meshCollider.sharedMesh = _mesh;
+    }
   }
 
   private void GeneratePoints()

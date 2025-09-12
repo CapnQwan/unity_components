@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public struct IsoGridCell
@@ -19,6 +20,38 @@ public struct IsoGridCell
       position + MarchingCubesLookupTable.CellVertices[7],
     };
     IsoValues = isoValues;
+  }
+}
+
+public struct MarchingCubesMeshRow
+{
+  public Vector3 Position;
+  public List<Vector3> Vertices;
+  public List<int> Triangles;
+  public List<Vector2> UVs;
+  public List<int> EdgeIndices;
+
+  public MarchingCubesMeshRow(Vector3 position)
+  {
+    Position = position;
+    Vertices = new List<Vector3>();
+    Triangles = new List<int>();
+    UVs = new List<Vector2>();
+    EdgeIndices = new List<int>();
+  }
+}
+
+public struct MarchingCubesOptions
+{
+  public bool IsRenderingEdges;
+  public float Threshold;
+  public Vector3Int Dimensions;
+
+  public MarchingCubesOptions(bool isRenderingEdges, float threshold, Vector3Int dimensions)
+  {
+    IsRenderingEdges = isRenderingEdges;
+    Threshold = threshold;
+    Dimensions = dimensions;
   }
 }
 
