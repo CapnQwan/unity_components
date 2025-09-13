@@ -36,6 +36,7 @@ public static class SphereMeshGenerator
     {
       throw new ArgumentException("Sections must be greater than 0.");
     }
+
     if (sections < 2)
     {
       throw new ArgumentException("Sections must be 2 or greater.");
@@ -62,10 +63,6 @@ public static class SphereMeshGenerator
 
     vertices[0] = new Vector3(0f, 1f * radius, 0f);
     vertices[vertexCount - 1] = new Vector3(0f, -1f * radius, 0f);
-    uvs[0] = new Vector2(0, 0);
-    uvs[vertexCount - 1] = new Vector2(0, 1);
-    normals[0] = Vector3.forward;
-    normals[vertexCount - 1] = Vector3.forward;
 
     for (int r = 1, i = 0, t = 1 - columns; r <= rows; r++)
     {
@@ -89,13 +86,24 @@ public static class SphereMeshGenerator
         triangles[localI * 6 + 4] = WNMathUtils.WrapInt(localT + columns, localT + columns, localT + columns * 2 - 1);
         triangles[localI * 6 + 5] = math.clamp(localT + columns * 2, 0, vertexCount - 1);
 
-        uvs[localI + 1] = new Vector2((c - 1) / (columns - 1), (r - 1) / (rows - 1));
-        normals[localI + 1] = Vector3.forward;
+        float u = (float)c / columns;
+        float v = 1f - r / (float)sections;
+        uvs[localI + 1] = new Vector2(u, v);
+
+        Vector3 vtx = new Vector3(xPosition, yPosition, zPosition);
+        vertices[localI + 1] = vtx;
+        normals[localI + 1] = vtx.normalized;
       });
 
       i += columns;
       t += columns;
     }
+
+    uvs[0] = new Vector2(0.5f, 1f);
+    uvs[vertexCount - 1] = new Vector2(0.5f, 0f);
+
+    normals[0] = vertices[0].normalized;
+    normals[vertexCount - 1] = vertices[vertexCount - 1].normalized;
 
     // Assign the generated data to the mesh.
     mesh.vertices = vertices;
